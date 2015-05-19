@@ -6,7 +6,8 @@
      'pcApp.common.directives.piecharts',
      'pcApp.common.directives.barscharts',
      'pcApp.common.directives.linescharts',
-     'pcApp.common.directives.helpbutton',    
+     'pcApp.common.directives.helpbutton',
+     'pcApp.common.directives.loadpcimage'
 ])
 
 .config(function($routeProvider) {
