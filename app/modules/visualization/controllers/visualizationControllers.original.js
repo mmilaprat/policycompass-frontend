@@ -2291,14 +2291,14 @@ angular.module('pcApp.visualization.controllers.visualization', [
 			}			
 		};
 		
-		console.log("chartParams");
-		console.log(chartParams['data']['2011']);
+//		console.log("chartParams");
+//		console.log(chartParams['data']['2011']);
 
 
 		
 		
 		$scope.loadMapExample = function(){		
-			console.log("sss");
+			//console.log("sss");
 /*
 var mapOptions = {
         panControl    : true,
@@ -2308,6 +2308,8 @@ var mapOptions = {
         //mapTypeId     : google.maps.MapTypeId.SATELLITE,
         mapTypeId     : google.maps.MapTypeId.TERRAIN,
     };
+
+
 $scope.map = {
     center: {
         latitude: 45,
@@ -2969,6 +2971,7 @@ $scope.xAxisTickFormatFunction = function(){
 		var svg = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
 		var imgurl = DOMURL.createObjectURL(svg);
 		//console.log(imgurl);
+
 		img.onload = function() {
     		ctx.drawImage(img, 0, 0);
     		
@@ -2978,6 +2981,7 @@ $scope.xAxisTickFormatFunction = function(){
     		$scope.visualization.imageurlpng = png;
     		//console.log($scope.visualization.imageurlpng);
     		DOMURL.revokeObjectURL(png);
+
 			Visualization.update($scope.visualization,function(value, responseHeaders){
 				$location.path('/visualizations/' + value.id);
 			},
@@ -3043,6 +3047,7 @@ $scope.xAxisTickFormatFunction = function(){
 	$scope.MetricSelectorLabelColumn_[1]='to';
 	$scope.MetricSelectorDataColumn_[1] ='value';
 	$scope.MetricSelectorGroupingData_[1] = 'grouping column';
+
 	selectedText = " ";
 	var myObject = {
 		'id':1,
@@ -3383,6 +3388,7 @@ function($scope, $route, $routeParams, $modal, Event, Metric, Visualization, $lo
 		var svg = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
 		var imgurl = DOMURL.createObjectURL(svg);
 		//console.log(imgurl);
+
 		img.onload = function() {
     		ctx.drawImage(img, 0, 0);
     		

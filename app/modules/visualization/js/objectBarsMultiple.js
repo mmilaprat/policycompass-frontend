@@ -730,6 +730,7 @@ policycompass.viz.barsMultiple = function(options) {
 		//console.log(self.parentSelect);
 		
 		self.svg = d3.select(self.parentSelect).append("svg")
+			.attr("class","pc_chart")
     		.attr("width", self.width + self.margin.left + self.margin.right + self.extraWidth)
     		.attr("height", self.height + self.margin.top + self.margin.bottom)
     		.on("mousemove", mousemove)

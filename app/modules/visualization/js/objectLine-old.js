@@ -119,8 +119,6 @@ policycompass.viz.line = function(options)
     
 	self.drawLines = function (lines, eventsData) {
 		
-		//console.log("drawlines eventsData");
-		//console.log(eventsData);
 		//console.log("cnt="+lines.length);
 		//console.log(lines);
         //console.log("self.showYAxesTogether="+self.showYAxesTogether);
@@ -210,14 +208,11 @@ policycompass.viz.line = function(options)
 				}		
 			});			
 		}
-		
-		var arrayXaxesLabel=[];
-		
+
 		lines.forEach(function(d,i) {
-			//console.log("****** i="+i);
+			//console.log(i)
 			//console.log(d.Values);
 			//console.log(d.ValueY);
-			//console.log(d.Color);
 			//console.log("d.Position="+d.Position)
 			//console.log("---");
 			//console.log(d.Values);
@@ -233,12 +228,8 @@ policycompass.viz.line = function(options)
 			
 			//var vMinValueD3 = d3.min(d3.values(d.Values));
 			var vMinValueD3 = d3.min(d3.values(r_data));
-			/*
-			if (vMinValueD3>0)
-			{
-				vMinValueD3 = 0;
-			}
-			*/
+			
+			//vMinValueD3 = 0;
 			self.arrayMinVy.push(vMinValueD3);
 			
 			
@@ -259,24 +250,13 @@ policycompass.viz.line = function(options)
    			}    
    			obj = d.ValueX;
 			//obj = d;
-			
 			for (var i in obj) {
-					//console.log("i="+i+"---obj[i]="+obj[i]);
-					
-					var a = arrayXaxesLabel.indexOf(obj[i]);
-					if (a<0)
-					{
-						arrayXaxesLabel.push(obj[i]);
-					}
    				   //result = "." + i + " = " + obj[i] + "\n"; 
    				   //console.log(result);
    				   //valuesX.push(parseInt(obj[i]));
    				   valuesX.push((obj[i]));
    				   //valuesX[i]=obj[i];
-   			}  
-   			
-   			self.lengthArrayXaxesLabel = arrayXaxesLabel.length;
-//   			console.log(self.lengthArrayXaxesLabel); 
+   			}   
 		});
 		
 		//console.log("--------------");
@@ -352,8 +332,6 @@ if (a>b) return -1;
 if (a <b) return 1;
 return 0;}
 		
-		var resolution = 'day';
-		var formatXaxe = "%d-%m-%Y";
 		//valuesX.sort(dmyOrdA);
 		//console.log(self.xaxeformat);
 		if (self.xaxeformat=='sequence')
@@ -362,22 +340,6 @@ return 0;}
 		}
 		else
 		{
-			//console.log(valuesX[0].length);
-			if (valuesX[0].length==4)
-			{
-				resolution = 'year';
-				formatXaxe = "%Y";
-			}
-			else if (valuesX[0].length==7)
-			{
-				resolution = 'month';
-				formatXaxe = "%m-%Y";
-			}
-			else if (valuesX[0].length==9)
-			{
-				resolution = 'day';
-				formatXaxe = "%d-%m-%Y";
-			}
 			valuesX.sort(mdyOrdA);
 			self.minDate = getDate(valuesX[0]),
 			self.maxDate = getDate(valuesX[valuesX.length-1]);
@@ -394,9 +356,6 @@ return 0;}
 		//console.log("self.minDate="+self.minDate);
         //self.x = d3.scale.linear().domain([0,lines[0].Values.length-1]).range([0,self.width]).clamp(true);
         //self.xScale = d3.scale.linear().domain([self.minVx, self.maxVx]).range([0, self.width]).clamp(true);
-        
-        //console.log(self.minDate);
-        //console.log("resolution="+resolution);
         
         if (self.xaxeformat=='sequence')
         {
@@ -544,17 +503,12 @@ return 0;}
 		}
 		else
 		{
-			//console.log(self.lengthArrayXaxesLabel);
 			var xAxis = d3.svg.axis()
 	    		.scale(self.xScale)
 	    		.orient("bottom")
 	    		//.ticks(d3.time.months, 1)
 	    		//.ticks(d3.time.weeks, 2)
-	    		//.tickFormat(d3.time.format("%d-%m-%Y"));
-	    		//.ticks(10)       
-	    		.ticks(self.lengthArrayXaxesLabel) 		
-	    		.tickFormat(d3.time.format(formatXaxe));
-	    				
+	    		.tickFormat(d3.time.format("%d-%m-%Y"));			
 		}
 		
 		var yAxis = d3.svg.axis()
@@ -618,7 +572,7 @@ return 0;}
 
 		if (showLabels)
 		{
-			/*
+			
 			self.svg.append("g")
 	      		.attr("class", "x axis")
 	      		.attr("transform", "translate(0," + self.height + ")")      		
@@ -635,23 +589,6 @@ return 0;}
                 	return "rotate(-25)" 
 				})				
 				;
-*/
-
-			self.svg.append("g")
-	      		.attr("class", "x axis")
-	      		.attr("transform", "translate(0," + self.height + ")")      		
-	      		.call(xAxis)	
-	      		.attr("font-size", self.font_size)
-	      		.selectAll("text")  
-            		.style("text-anchor", "end")
-            		//.attr("dx", "-.8em")
-            		//.attr("dy", ".15em")
-            		.attr("transform", function(d) {
-                	return "rotate(-25)" 
-				})				
-				;
-			
-
 			
 			if (self.showYAxesTogether)
 			{
@@ -659,7 +596,7 @@ return 0;}
 				//console.log("self.labelY.length="+self.labelY.length);
 //				for (index = 0; index < self.labelY.length; ++index) {
 				var keyIndex;
-/*
+
 		  		self.svg.append("g")
 		      		.attr("class", "y axis")
  		        	.attr("fill", "none")	
@@ -667,13 +604,6 @@ return 0;}
 		        	.style("stroke-width", '1')
 		      		.call(yAxis)
 		      		.attr("font-size", self.font_size);	
-*/
-
-		  		self.svg.append("g")
-		      		.attr("class", "y axis")
-		      		.call(yAxis)
-		      		.attr("font-size", self.font_size);
-		      		
 			     
 			    var arrayYaxisProcessed = [];
 				var cnt_keyIndex = 0;
@@ -737,12 +667,11 @@ return 0;}
 					      			//return colorScaleLinel((cnt_linea-1));
 					      		})
 					      		 */
-					      		//.attr("fill", "none")
 					      		 .style("fill", function(d,i) {
 					      			return colorScale(lines[keyIndex].Key);
 					      			//return colorScaleLinel((cnt_linea-1));
 					      		})
-					      		.style("font-weight", "bold")
+					      		 
 				      			.style("text-anchor", "end")
 				      			.text(self.labelY[keyIndex]);
 	
@@ -793,15 +722,13 @@ return 0;}
     		self.cntLineasPintadas = i;
     		cnti = cnti+1;
     		//console.log("forEach");
-//    		console.log(d);
+    		//console.log(d);
     		
     		//var linesArray = [];
     		//var linesObject = new Object();
     		var linesArray = [];
     		var linesArrayX = [];
     		var linesArrayXY = [];
-			var lineColor = [];
-    		
 			var evaluate = 0;
     		if('ValueY' in d)
     		{
@@ -816,7 +743,6 @@ return 0;}
     				linesArrayX = d.ValueX;
     				//linesArrayXY = d.XY;
     				linesArrayXY = d.ValueX+"|"+d.ValueY;
-    				lineColor = d.Color;
     			//}
     			//else
     			//{
@@ -841,7 +767,6 @@ return 0;}
     		}
 
 			key=d.Key;
-			
 			
 			//to create n y axes
 			if ((!self.showYAxesTogether) && (showLabels))
@@ -876,11 +801,9 @@ return 0;}
 	        		}	
         		
 					transform = "translate(0,0)";
-					
-					
 					var yAxisLeft = d3.svg.axis()
 					.scale(self.yArray[i])
-					//.ticks(10)
+					.ticks(10)
 					//.orient("left")
 					//.orient("right")
 					.orient(orientText)
@@ -939,35 +862,18 @@ return 0;}
 				{
 					offsetYaxes = self.offsetYaxesL/2;
 				}
-							/*	
+								
 				self.svg.append("svg:g")
 				      .attr("class", "y axis axisLeft")
-				      //.attr("class", "y axis axisLeft class_"+d.Key.replace(/\W/g, ''))
 				      .attr("transform", transform)
-				      //
-				      //.style("stroke", function(d,i) {
-				      //	//console.log("----->key="+key);
-				      //	return colorScale(key);
-				      //	})
-				      		      	
+				      /*
+				      .style("stroke", function(d,i) {
+				      	//console.log("----->key="+key);
+				      	return colorScale(key);
+				      	})
+				      	*/				      	
 				       .attr("fill", "none")
-		        	   .style("stroke", function (d, i) { 
-		        	   	
-		        	   	var colorToReturn;
-		        	   	
-		        	   	if (lineColor)
-		        	   	{
-		        	   		colorToReturn = lineColor; 
-		        	   	}
-		        	   	else
-		        	   	{
-		        	   		colorToReturn = colorScale(key); 
-		        	   	}
-		        	   	return colorToReturn;
-		        	   	
-		        	   	//return colorScale(key); 
-		        	   	
-		        	   	})
+		        	   .style("stroke", function (d, i) { return colorScale(key); })
 		               .style("stroke-width", '1')
 				      .attr("font-size", self.font_size)
 				      .call(yAxisLeft)
@@ -979,39 +885,7 @@ return 0;}
 		      			.style("text-anchor", "end")
 		      			.text(self.labelY[cnti-1])
 				      ;
-				      */
-
-					self.svg.append("svg:g")
-				      .attr("class", "y axis axisLeft")				      
-				      .attr("transform", transform)
-				      .style("fill", function (d, i) { 
-
-						var colorToReturn;
-		        	   	
-		        	   	if (lineColor)
-		        	   	{
-		        	   		colorToReturn = lineColor; 
-		        	   	}
-		        	   	else
-		        	   	{
-		        	   		colorToReturn = colorScale(key); 
-		        	   	}
-		        	   	return colorToReturn;				      	
-				      	//return colorScale(key); 
-				      	
-				      	})
 				      
-				      //.style("stroke-width", 2)				      
-				      .attr("font-size", self.font_size)
-				      .call(yAxisLeft)
-				      .append("text")
-		      			.attr("transform", "rotate(-90)")		      			
-		      			//.attr("dy", ".71em")
-		      			.attr("dy", paddingText)
-		      			.attr("y", offsetYaxes)
-		      			.style("text-anchor", "end")
-		      			.text(self.labelY[cnti-1])
-				      ;
 				      
 				      //.call(self.yArray[self.cntLineasPintadas]);
 				      
@@ -1056,8 +930,7 @@ return 0;}
          		posX: posXToPrint,
          		posY: d,
          		key: key,
-         		xOriginal:linesArrayX[i],
-         		color: lineColor
+         		xOriginal:linesArrayX[i]
       			};      
   				});
     			
@@ -1117,41 +990,8 @@ return 0;}
       				.datum(data)
       				.attr("class", "area area_item item_"+(cnti-1)+" area_class_"+key.replace(/\W/g, ''))
       				.attr("d", area)
-      				.style("fill", function(d,i) {
-      					
-      					
-      					var colorToReturn;
-		        	   	
-		        	   	if (lineColor)
-		        	   	{
-		        	   		colorToReturn = lineColor; 
-		        	   	}
-		        	   	else
-		        	   	{
-		        	   		colorToReturn = colorScale(key); 
-		        	   	}
-		        	   	return colorToReturn;
-      					
-      					//return colorScale(key);
-      					
-      					})
-      				.style("stroke", function(d,i) {
-      					
-      					var colorToReturn;
-		        	   	
-		        	   	if (lineColor)
-		        	   	{
-		        	   		colorToReturn = lineColor; 
-		        	   	}
-		        	   	else
-		        	   	{
-		        	   		colorToReturn = colorScale(key); 
-		        	   	}
-		        	   	return colorToReturn;
-      					
-      					//return colorScale(key);
-      					
-      					})
+      				.style("fill", function(d,i) {return colorScale(key);})
+      				.style("stroke", function(d,i) {return colorScale(key);})
       				//.style("fill", function(d,i) {return colorScaleLinel((cnti-1));})
       				//.style("stroke", function(d,i) {return colorScaleLinel(cnti-1);})
       				.style("opacity",0.3)
@@ -1159,7 +999,7 @@ return 0;}
       		}
           	if ((showLines) && (cntpasadas==2))
 		  	{
-		  		//console.log(data);
+//		  		console.log(data);
 		  		
 	  			var path = self.svg.append("path")
 		      		.datum(data)
@@ -1171,21 +1011,7 @@ return 0;}
 		      		//.style("stroke", function(d,i) {return colorScale(key);})
 		      		
 				       .attr("fill", "none")
-		        	   .style("stroke", function (d, i) { 
-		        	   	
-		        	   	var colorToReturn;
-		        	   	if (d[i].color)
-		        	   	{
-		        	   		colorToReturn = d[i].color; 
-		        	   	}
-		        	   	else
-		        	   	{
-		        	   		colorToReturn = colorScale(key); 
-		        	   	}
-		        	   	return colorToReturn;
-		        	   	//return colorScale(key); 
-		        	   	
-		        	   	})
+		        	   .style("stroke", function (d, i) { return colorScale(key); })
 		               .style("stroke-width", 2)		      		
 		      		
 		      		//.style("stroke", function(d,i) {return colorScaleLinel(cnti-1);})
@@ -1249,11 +1075,8 @@ return 0;}
 			}
         	var resTRext = key.split("_");
         	
-//            self.legendText = self.legendText + '<div style="margin-top: 2px; width: 5px; background: '+colorScale(key)+'; height: 5px; float: left;"> </div>&nbsp;<font color="'+colorScale(key)+'">'+resTRext[0]+'</font><br/>';
-            
-            self.legendText = self.legendText + '<div style="margin-top: 2px; width: 5px; background: '+lineColor+'; height: 5px; float: left;"> </div>&nbsp;<font color="'+lineColor+'">'+resTRext[0]+'</font><br/>';
-            
-            
+            self.legendText = self.legendText + '<div style="margin-top: 2px; width: 5px; background: '+colorScale(key)+'; height: 5px; float: left;"> </div>&nbsp;<font color="'+colorScale(key)+'">'+resTRext[0]+'</font><br/>';
+            //self.legendText = self.legendText + '<div style="margin-top: 2px; width: 5px; background: '+colorScaleLinel(cnti-1)+'; height: 5px; float: left;"> </div>&nbsp;<font color="'+colorScaleLinel(cnti-1)+'">'+resTRext[0]+'</font><br/>';
             
 	    	if (showLegend)
 	    	//if (1==1) 
@@ -1281,25 +1104,8 @@ return 0;}
 		    	.attr("width", 5)
 		    	.attr("height", 5)
 		    	.style("fill", function(d,i) {
-		    		
-		    		//console.log(d);
-		    		//console.log(i)
-		    		//console.log(lineColor);
-
-					var colorToReturn;
-		        	   	
-	        	   	if (lineColor)
-	        	   	{
-	        	   		colorToReturn = lineColor; 
-	        	   	}
-	        	   	else
-	        	   	{
-	        	   		colorToReturn = colorScale(key);
-	        	   	}
-	        	   	return colorToReturn; 
-		    		
-		    		//return colorScale(key);
-
+		    		return colorScale(key);
+		    		//return colorScaleLinel(cnti-1);
 		    		});
 
 
@@ -1319,22 +1125,7 @@ return 0;}
 					.attr("text-decoration","none")					
 					.attr("class", "link superior legend value")				
 					.attr("font-size", self.font_size)
-					.style("fill", function (d, i) { 
-
-						var colorToReturn;
-		        	   	
-		        	   	if (lineColor)
-		        	   	{
-	    	    	   		colorToReturn = lineColor; 
-	        		   	}
-	        		   	else
-	        	   		{
-	        	   			colorToReturn = colorScale(key);
-	        	   		}
-	        	   		return colorToReturn;
-	        	   							
-						//return colorScale(key); 
-					})
+					.style("fill", function (d, i) { return colorScale(key); })
 					/*
 					.style("stroke", function(d,i) {
 						//console.log("key="+key);
@@ -1345,7 +1136,7 @@ return 0;}
 					//.on("mouseover", function (d,i) {
 				    .on("mouseover", function() {
 				    	
-				    	//console.log(self.modeGraph);
+				    	console.log(self.modeGraph);
 						if (self.modeGraph=='view')
 						{
 							//var str = d3.select(this).text();
@@ -1616,7 +1407,6 @@ return 0;}
 		{
 			lines.forEach(function(d,i) {
 			    var keyCircle = d.Key;
-			    var colorCircle = d.Color;
 			    var cntLine = i;
 				//var myCircles = self.svg.selectAll("circles").data(d.Values);
 				//var myCircles = self.svg.selectAll("circles").data(d.ValueY);
@@ -1678,23 +1468,7 @@ return 0;}
                     .attr("class", "pointIn active_item point_"+keyCircle.replace(/\W/g, '')+" class_"+keyCircle.replace(/\W/g, ''))                     
                     .style("stroke-width", self.radius)
                     .style("stroke", function(d,i) {
-                    	
-                    	//console.log(colorCircle);
-                    	//console.log(i);
-
-						var colorToReturn;
-		        	   	
-		        	   	if (colorCircle)
-		        	   	{
-		        	   		colorToReturn = colorCircle; 
-		        	   	}
-		        	   	else
-		        	   	{
-		        	   		colorToReturn = colorScale(keyCircle);
-		        	   	}
-		        	   	return colorToReturn;                    	
-                    	
-                    	//return colorScale(keyCircle);
+                    	return colorScale(keyCircle);
                     	//return colorScaleLinel(cntLine);
                     	})
                     //.attr("opacity", 1.0)
@@ -1741,20 +1515,7 @@ return 0;}
 		    				}
 		    				else
 		    				{
-		    					if (resolution=='day')
-		    					{
-		    						endDateToPlot = monthNames[parseInt(resSplit[1])]+" "+parseInt(resSplit[2])+", "+resSplit[0];
-		    					}
-		    					else if (resolution=='month')
-		    					{
-		    						endDateToPlot = monthNames[parseInt(resSplit[1])]+" "+parseInt(resSplit[0]);
-		    					}
-		    					else if (resolution=='year')
-		    					{
-		    						endDateToPlot = +parseInt(resSplit[0]);
-		    					}
-		    					
-		    						
+		    					endDateToPlot = monthNames[parseInt(resSplit[1])]+" "+parseInt(resSplit[2])+", "+resSplit[0];	
 		    				}
 		    				
 		    				   
@@ -1799,13 +1560,11 @@ return 0;}
 		    				
 		    				if (showAsPercentatge)
 		    				{
-		    					units = " %";	
+		    					units = units +" %";	
 		    				}
 		    				
-		    				//tooltip.style("opacity",1.0).html("<font color='"+colorScale(keyCircle)+"'>"+resSplit[0]+"<br/>"+endDateToPlot+" <br /> "+number+" "+units+"</font>");
-		    				
-		    				tooltip.style("opacity",1.0).html("<font color='"+colorCircle+"'>"+resSplit[0]+"<br/>"+endDateToPlot+" <br /> "+number+" "+units+"</font>");
-
+		    				tooltip.style("opacity",1.0).html("<font color='"+colorScale(keyCircle)+"'>"+resSplit[0]+"<br/>"+endDateToPlot+" <br /> "+number+" "+units+"</font>");
+		    				//tooltip.style("opacity",1.0).html("<font color='"+colorScaleLinel(cntLine)+"'>"+resSplit[0]+"<br/>"+endDateToPlot+" <br /> "+number+" "+units+"</font>");
 		    				
 			    			//renderLine((self.x(i)), (self.y(d))); 
 			    		}
@@ -1842,15 +1601,9 @@ return 0;}
 /*************Ini plot historical events *******/
 
 		var dataForCircles = [];
-		//console.log("self.eventsDataIn");
-		//console.log(self.eventsDataIn);		
-		//console.log("eventsData");
-		//console.log(eventsData);
-		
 		for (var i in eventsData) {
       		//dataForCircles[eventsData[i].posX]=eventsData[i].posY;
-      		 //console.log("---------");
-      		 //console.log(eventsData[i]);
+      		//console.log(eventsData[i]);
       		 var arrayTemporal = [];
       		 arrayTemporal['index']=i;
       		 arrayTemporal['color']=eventsData[i].color;
@@ -1869,8 +1622,6 @@ return 0;}
 	//	console.log("d.startDate="+d.startDate);
 	//	console.log("getDate(d.startDate)="+getDate(d.startDate));
 	//	console.log("x="+self.xScale(getDate(d.startDate));
-		//console.log("historicalEvents");
-		//console.log(historicalEvents);
 		
 		historicalEvents.enter().append("rect")
 			.attr("class","lineXDisco")
@@ -1900,14 +1651,9 @@ return 0;}
 			.attr("opacity", 0.5)
             .attr("x", function(d,i){
             	//console.log(i);
-				//console.log("d.startDate="+d.startDate);
+				//console.log(d.startDate);
 				//console.log(self.xScale(d.startDate));
 				var posXToPlot = self.xScale(getDate(d.startDate));
-				
-				if (isNaN(posXToPlot))
-				{
-					posXToPlot=1;
-				}
 				//console.log("posXToPlot="+posXToPlot);
 				return posXToPlot;
 			})
@@ -1930,11 +1676,7 @@ return 0;}
 				{
 					dif=1;
 				}
-				
-				if (isNaN(dif))
-				{
-					dif=1;
-				}
+				//console.log("last dif="+dif);
 				return dif;
 			})
 			.attr("height", self.height)                        
@@ -1942,16 +1684,8 @@ return 0;}
 				d3.select(this).style("stroke-width", 2);
 				//d3.select(this).classed("pointOn", true);
 				var textTooltip="";
-				//console.log("-----------d.startDate");
-				//console.log(d.startDate);
-				if (d.startDate)
-				{
-					var resSplit = d.startDate.split("-");	
-				}
-				else
-				{
-					var resSplit = [];
-				}
+				
+				var resSplit = d.startDate.split("-");
 				var monthNames = [ "", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
 		    				
 				var startDateToPlot = monthNames[parseInt(resSplit[1])]+" "+parseInt(resSplit[2])+", "+resSplit[0];
@@ -1961,14 +1695,7 @@ return 0;}
 				textTooltip = d.title+"<br /> From: "+startDateToPlot;
 				if (d.endDate!="")
 				{
-					if (d.endDate)
-					{
-						var resSplit = d.endDate.split("-");	
-					}
-					else
-					{
-						var resSplit = [];
-					}
+					var resSplit = d.endDate.split("-");
 					var endDateToPlot = monthNames[parseInt(resSplit[1])]+" "+parseInt(resSplit[2])+", "+resSplit[0];
 					//textTooltip = textTooltip+" - "+d.endDate;
 					textTooltip = textTooltip+" <br /> To: "+endDateToPlot;
@@ -2060,7 +1787,7 @@ return 0;}
     	    };
 */    	           	
 		self.svg = d3.select(self.parentSelect).append("svg")
-		    .attr("class","pc_chart")
+			.attr("class","pc_chart")
 			.attr("width", self.width + self.margin.left + self.margin.right)
 			.attr("height", self.height + self.margin.top + self.margin.bottom)
 			//.call(d3.behavior.zoom().on("zoom", redraw))
@@ -2120,7 +1847,7 @@ return 0;}
 			
 	/* function to Plot data into the graph*/
 	self.render = function(dataToPlot, eventsData, modeGraph) {
-		//console.log("render lines");
+		
 		//console.log("dataToPlot");		
 		//console.log(dataToPlot);		
 		//console.log("eventsData");

@@ -160,8 +160,19 @@ $scope.dataset (mandatory) =[{"Key":"USA_0","Labels":["1989-01-01","2003-01-01",
 				}
 				
             });
+
+
+        	$scope.$watchCollection('events', function(events) {
+        		
+				if ($scope.numbers1)
+				{
+					$scope.directivePlotLineChart();
+				}
+
+        	});
+        	            
                                 	            
-			$scope.$watch('dataset', function(dataset) {
+			$scope.$watchCollection('dataset', function(dataset) {
 				numbers1=dataset;
 				$scope.numbers1=dataset;
 				if ($scope.numbers1)
@@ -191,7 +202,7 @@ $scope.dataset (mandatory) =[{"Key":"USA_0","Labels":["1989-01-01","2003-01-01",
 				}
 				else if ($scope.chartid)
 				{
-					document.getElementById("directive_container_lineschart_2").innerHTML = "";
+					document.getElementById("directive_container_lineschart_").innerHTML = "";
 					$scope.iddiv="directive_container_lineschart_"+$scope.chartid;
 				}
 							
@@ -297,7 +308,7 @@ $scope.dataset (mandatory) =[{"Key":"USA_0","Labels":["1989-01-01","2003-01-01",
 		'<label class="checkbox-inline"><input ng-model="showTogether"  type="checkbox" name="showTogether"  class="checkbox filterCheckBox"> Show only one Y axe</label>' +
         '<label class="checkbox-inline"><input ng-model="showPercentatge" type="checkbox" name="showPercentatge" class="checkbox filterCheckBox"> Show as %</label>' +
         '</div>' +
-        '<div id="directive_container_lineschart_{{chartid}}" class="container_graph directive_container_chart directive_container_chart_{{chartid}}">' +        
+        '<div id="directive_container_lineschart_{{chartid}}" class="pcchart container_graph directive_container_chart directive_container_chart_{{chartid}}">' +        
         '<div class="loading-container">'+
 			'<div ng-hide="small">'+
 				'<div class="loading"></div>'+

@@ -201,8 +201,8 @@ $scope.dataset  (mandatory) = [{"Category":"1","From":20950114,"Key":"Air pollut
         '<label class="checkbox-inline"><input ng-model="showLegend" type="checkbox" name="showLegend" class="checkbox filterCheckBox"> Show Legend</label>' +
         '<label class="checkbox-inline"><input ng-model="showLabels" type="checkbox" name="showLabels" class="checkbox filterCheckBox"> Show Labels</label>' +
         '<label class="checkbox-inline"><input ng-model="showGrid"   type="checkbox" name="showGrid"   class="checkbox filterCheckBox"> Show Grid</label>' +
-        '</div>' + 
-        '<div id="directive_container_barschart_{{chartid}}" class="container_graph directive_container_chart_{{chartid}}">'+
+        '</div>' +        
+        '<div id="directive_container_barschart_{{chartid}}" class="pcchart container_graph directive_container_chart_{{chartid}}">'+
         '<div class="loading-container">'+
 			'<div ng-hide="small">'+
 				'<div class="loading"></div>'+
@@ -212,7 +212,7 @@ $scope.dataset  (mandatory) = [{"Category":"1","From":20950114,"Key":"Air pollut
 				'<div class="loading loading-small"></div>'+
 				'<div id="loading-small-text">loading</div>'+
 			'</div>'+
-		'</div>'+	        
+		'</div>'+
         '</div>'
         
     };

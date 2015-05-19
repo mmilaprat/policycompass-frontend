@@ -383,6 +383,7 @@ policycompass.viz.pie = function(options)
 		//console.log(self.parentSelect);
 		
 		self.svg = d3.select(self.parentSelect).append("svg")
+					.attr("class","pc_chart")
 					.attr("id", "graph_"+self.idName)
                     .attr("width", self.width+self.margin.right+self.margin.left)
                     .attr("height", self.height+self.margin.top+self.margin.bottom)

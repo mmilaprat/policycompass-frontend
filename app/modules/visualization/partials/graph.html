@@ -1,6 +1,33 @@
-<div>
+<div ng-controller="VisualizationsEditController">
 	<div ng-hide="list">
+		
+		<div ng-show="isSelectedParent(1)">
+			<form>
+				<div ng-show="dataset.length>0">
+					
+					<rzslider
+					 rz-slider-model="rangeDatesSliderMin"
+					 rz-slider-floor="0"
+					 rz-slider-ceil="numbers2.length-1"
+					 rz-slider-translate="translateCountrySlider"
+					 ></rzslider>
+					<!--	
+					<rzslider
+					    rz-slider-floor="0"
+					    rz-slider-ceil="numbers2.length-1"
+					    rz-slider-model="rangeDatesSliderMin"
+					    rz-slider-high="rangeDatesSliderMax"
+					    rz-slider-translate="translateCountrySlider"
+					    rz-slider-step="1"
+					    >
+					</rzslider>
+					-->		
+				</div>
+			</form>
+		</div>
+		
 		<div ng-show="isSelectedSon('graph_pie')">
+			
 			<form>
 				<!--
 				<select 	
@@ -9,6 +36,30 @@
 				ng-change="angularpiechartdisplay();"						
 				ng-options="option.Key as option.Key for option in numbers2"></select>
 				-->
+         
+				<div ng-show="dataset.length>0">
+
+					<rzslider
+					 rz-slider-model="rangeDatesSliderMin"
+					 rz-slider-floor="0"
+					 rz-slider-ceil="numbers2.length-1"
+					 rz-slider-translate="translate"
+					 ></rzslider>
+
+					<!--
+					<rzslider
+					    rz-slider-floor="0"
+					    rz-slider-ceil="numbers2.length-1"
+					    rz-slider-model="rangeDatesSliderMin"
+					    rz-slider-high="rangeDatesSliderMax"
+					    rz-slider-translate="translate"
+					    rz-slider-step="1"
+					    >
+					</rzslider>
+					-->			
+				</div>
+						
+				<!--
 				<span>
 					<label class="checkbox-inline" for="selectedAll">
 						<input type="checkbox" ng-model="selectedAll" ng-change="checkAll();angularpiechartdisplaybycheckbox();" /> Check All
@@ -21,6 +72,7 @@
         				{{option.Key}}
       				</label>
 				</span>
+				-->
 			</form>	
 		</div>
 	</div>
@@ -47,6 +99,35 @@
 		xaxeformat=""
 		></div>
 	</div>
+	<!--
+<div ng-hide="!isSelectedParent(1)">
+	<datamap
+  	options="mapTest.options"
+  	data="mapTest.data"
+  	colors="mapTest.colors"
+  	type="{{ mapTest.type }}"
+  	on-click="updateActiveGeography"
+  	>
+	</datamap>
+</div>
+-->
+
+	<div ng-hide="!isSelectedParent(1)">
+		<div class="pcMapsChart" chartid="visualization.id" dataset="datasetToSendMap"  
+		small="list"  mode="mode" show-Legend="showLegend" show-Zoom="showZoom" projection="typeToPlot"
+		fromcountry="translateCountryValue(rangeDatesSliderMin)"
+		tocountry="translateCountryValue(rangeDatesSliderMax)"
+		
+		></div>
+	</div>
+	
+
+		
+<!--
+	<div  ng-hide="!isSelectedParent(1)" id="container_graph_{{visualization.id}}" class="container_graph">	
+	</div>
+-->
+	
 <!--
 	<div id="container_graph_{{visualization.id}}" class="container_graph">		
 		<div class="loading-container">
