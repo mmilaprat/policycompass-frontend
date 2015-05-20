@@ -12,16 +12,17 @@
                     <div class="panel-body">
                         {{ visualization.created_at | date:'longDate' }}    
                         <br />
-                        <!--
+                        <!--                        
 						<div class="visualization-graph-page-content">	
-							<div ng-controller="VisualizationsEditController" ng-repeat="idvisulist in [visualization.id]" ng-include='"modules/visualization/partials/graph.html"' ></div>	
+							<div ng-repeat="idvisulist in [visualization.id]" ng-include='"modules/visualization/partials/graph.html"'></div>	
 						</div>
 						-->
 						<div class="loadpcimage" id="visualization.id" imgtype="'visualization'" imgalt="visualization.title" imgtitle="visualization.title"></div>
+
 						<br />
 						<!--
                         <a href="#/visualizations/{{ visualization.id }}" type="button" class="btn btn-primary">Details</a>
-                        -->
+                       -->
                     </div>
                 </div>
             </div>

@@ -25,6 +25,10 @@ var policycompass = policycompass || {'version':0.1, 'controller':{}, 'viz': {} 
       return a > 90 ? a - 180 : a;
     }
 
+
+
+  
+
 policycompass.viz.pie = function(options)
 {
 
@@ -36,6 +40,7 @@ policycompass.viz.pie = function(options)
 	for (var key in options){
         self[key] = options[key];
 	}
+
 	
 	self.clicToOpen = true;
 	
@@ -164,7 +169,22 @@ policycompass.viz.pie = function(options)
 		
 		self.g.append("path")
 			.attr("d", self.arc)		      
-		    .style("fill", function(d,i) {return colorScale(i);});
+		    .style("fill", function(d,i) {
+		    	
+					var colorToReturn;		        	  
+					colorToReturn = colorScale(i);
+					if (piesArray.Colors)
+					{
+		        	   	if (piesArray.Colors[i])
+		        	   	{
+		        	   		colorToReturn = piesArray.Colors[i]; 
+		        	 	}
+		        	}
+		        	return colorToReturn;
+		    	
+		    	//return colorScale(i);
+		    	
+		    });
 		
 		if (showLabels)
 		{
@@ -342,7 +362,24 @@ policycompass.viz.pie = function(options)
 		    	.attr("x", self.radius + 5)	   		      		 	
 		    	.attr("width", 5)
 		    	.attr("height", 5)
-		    	.style("fill", function(d,i) {return colorScale(i);});
+		    	.style("fill", function(d,i) {
+		    		
+
+		    		var colorToReturn;		        	  
+					colorToReturn = colorScale(i);
+					if (piesArray.Colors)
+					{
+		        	   	if (piesArray.Colors[i])
+		        	   	{
+		        	   		colorToReturn = piesArray.Colors[i]; 
+		        	 	}
+		        	}
+		    		
+		    		return colorToReturn;
+		    		
+		    		//return colorScale(i);
+		    		
+		    		});
 		
 		  	legend.append("text")
 		  		//.attr("class", "text_pie_"+self.idName) 
@@ -353,7 +390,23 @@ policycompass.viz.pie = function(options)
 		    	.attr("dy", "-.30em")
 		    	//.style("text-anchor", "end")
 		    	//.style("stroke", function(d,i) {return colorScale(i);})
-		    	.style("fill", function (d, i) { return colorScale(i); })		    	
+		    	.style("fill", function (d, i) { 
+		    		
+		    		var colorToReturn;		        	  
+					colorToReturn = colorScale(i);
+					if (piesArray.Colors)
+					{
+		        	   	if (piesArray.Colors[i])
+		        	   	{
+		        	   		colorToReturn = piesArray.Colors[i]; 
+		        	 	}
+		        	}
+		    		
+		    		return colorToReturn;
+		    		//return colorScale(i); 
+		    		
+		    		
+		    		})		    	
 		    	.text(function(d,i) {
 					var textToReturn = pieslabels[i];
 					//textToReturn = textToReturn+": "+pies[i];
@@ -397,7 +450,7 @@ policycompass.viz.pie = function(options)
 
     self.render = function(piesArray){
 		
-		//console.log(piesArray);
+//		console.log(piesArray);
 		
 		if (Object.keys(piesArray).length === 0)
 		{

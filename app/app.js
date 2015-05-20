@@ -15,7 +15,9 @@ var pcAppDependencies = [
     'dialogs.main',
     'dialogs.default-translations',
     'angularSpectrumColorpicker',
-    'skrollrDirectives'
+    'skrollrDirectives',
+    'rzModule',
+    'checklist-model'
     //'nvd3ChartDirectives'
 ];
 

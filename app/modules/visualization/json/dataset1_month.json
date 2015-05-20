@@ -1,0 +1,136 @@
+{
+    "self": "/api/v1/datasetmanager/dataset/1",
+    "id": 1,
+    "title": "Dataset 1 Gross Domestic Product at Market Prices for Germany and Spain",
+    "acronym": "Dataset 1 ",
+    "description": "Dataset 1 GDP (gross domestic product) is....",
+    "keywords": "Dataset 1, GDP, Market Price",
+    "license": "",
+    "version": 1,
+    "user_id": 1,
+    "dateAddedtoPC": "2014-07-05T16:27:07.168Z",
+    "dateModified": "2014-07-05T16:27:07.168Z",
+    "is_applied": true,
+    "applied_details": {
+        "metric": {
+            "id": 3,
+            "title": "Dataset 1 Gross Domestic Product at Market Prices for Germany and Spain",
+            "formula": "0.6*nle(__1__)+0.4*ncm(__2__)/__3__"
+        },
+        "datasets": [
+            {
+                "variable": "__1__",
+                "dataset": 3
+            },
+            {
+                "variable": "__2__",
+                "dataset": 5
+            }
+        ]
+    },
+    "spatial": [
+        {
+            "id": 1,
+            "title": "Spain",
+            "identifier": "ESP",
+            "class": {
+                "id": 1,
+                "title": "Country"
+            }
+        }
+    ],
+    "resource": {
+        "resource_url": "http://epp.eurostat.ec.europa.eu/tgm/refreshTableAction.do?tab=table&plugin=1&pcode=tec00001&language=en",
+        "resource_issued": "2014-05-28",
+        "external_resource": {
+            "url": "http://epp.eurostat.ec.europa.eu/",
+            "api_url": "http://epp.eurostat.ec.europa.eu/portal/page/portal/sdmx_web_services/getting_started/rest_sdmx_2.1",
+            "title": "Eurostat",
+            "id": 1
+        }
+    },
+    "unit": {
+        "unit_category": {
+            "id": 2,
+            "title": "Mass",
+            "identifier": "mass"
+        },
+        "id": 6,
+        "title": "kg",
+        "description": "Kilogram",
+        "identifier": "kilogram"
+    },
+    "language": {
+        "code": "en",
+        "title": "English",
+        "id": 1
+    },
+    "policy_domains": [
+        {
+            "description": "Education",
+            "title": "Education",
+            "id": 1
+        },
+        {
+            "description": "Economy",
+            "title": "Economy",
+            "id": 2
+        }
+    ],
+    "class": {
+        "id": 1,
+        "name": "Country"
+    },
+    "dimensions": [
+        {
+            "class": {
+                "id": 2,
+                "name": "Gender"
+            },
+            "individual": {
+                "id": 12,
+                "name": "Female"
+            }
+        }
+    ],
+    "property": {
+        "id": 1,
+        "title": "Health",
+        "description": "Property for health"
+    },
+    "time": {
+        "resolution": "month",
+        "start": 2000,
+        "end": 2003
+    },
+    "data": {
+        "table": [
+            {
+                "individual": {
+                    "id": 1,
+                    "title": "Spain"
+                },
+                "row": 1,
+                "values": {
+                    "2000-02": 2232.3,
+                    "2001-02": 4324.3,
+                    "2002-02": 5324.3,
+                    "2003-02": 1324.3
+                }
+            },
+            {
+                "individual": {
+                    "id": 2,
+                    "title": "Germany"
+                },
+                "row": 2,
+                "values": {
+                    "2000-02": 3543.6,
+                    "2001-02": 3324.3,
+                    "2002-02": 5324.3,
+                    "2003-02": 2324.3
+                }
+            }
+        ]
+    }
+}

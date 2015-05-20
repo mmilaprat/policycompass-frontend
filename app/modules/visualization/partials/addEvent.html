@@ -9,9 +9,7 @@
 <div class="modal-body">
 	<div id="basic-modal-content-pc">
 
-	<tabset>                                        
-		
-		
+	<tabset>
 		<tab heading="Recommended">
 			<!--
 			<div class="modal-header">
@@ -25,14 +23,31 @@
         				<!--
         				<label for="historicalEvents">Historical events:</label>
         				-->
+
+						<div ng-show="showLoading" class="loading-container">
+								<div class="loading"></div>
+								<div id="loading-text">loading</div>
+						</div>
+        				
 			        	<div>        		
 			        		<label ng-show="recomendationevents.length>1" for="">{{recomendationevents.length}} events found</label> 
 							<label ng-show="recomendationevents.length==1" for="">{{recomendationevents.length}} event found</label>
-			        		<label ng-show="recomendationevents.lengthl==0" for="">no events found</label> 
+			        		<label ng-show="recomendationevents.length==0" for="">no events found</label> 
 			        	</div>
 
 			        	<ul class="metrics-list" id="metrics-list">			
-							<li ng-repeat="event in recomendationevents | orderBy:'title' | pagination: curPage * pageSize | limitTo: pageSize " ><a href ng-click="selectHE(event,'recomendation')">{{event.title}}</a></li>				
+							<li ng-repeat="event in recomendationevents | orderBy:'title' | pagination: curPage * pageSize | limitTo: pageSize " >
+								<!--
+								<a href ng-click="selectHE(event,'recomendation')">{{event.title}}</a>
+								-->
+								<span ng-show="idsEventsToPlot[event.id]">
+									{{event.title}} (It's assigned)
+								</span>
+								<span ng-hide="idsEventsToPlot[event.id]">
+									<a href ng-click="selectHE(event,'recomendation')">{{event.title}}</a>
+								</span>								
+								
+								</li>				
 						</ul>
     						
 
@@ -145,7 +160,14 @@
 			        	</div>
 
 			        	<ul class="metrics-list" id="metrics-list">			
-							<li ng-repeat="event in events.hits.hits track by $index" ><a href ng-click="selectHE(event,'search')">{{event._source.title}}</a></li>				
+							<li ng-repeat="event in events.hits.hits track by $index" >
+								<span ng-show="idsEventsToPlot[event._id]">
+									{{event._source.title}} (It's assigned)
+								</span>
+								<span ng-hide="idsEventsToPlot[event._id]">
+									<a href ng-click="selectHE(event,'search')">{{event._source.title}}</a>
+								</span>
+							</li>
 						</ul>
 
 						<div>
@@ -169,12 +191,12 @@
 		<!--
 		<form action="#" name="neweventForm" ng-submit="submitFormAddEvent()" novalidate>
 		-->
+	</div>
+	
+	<a name="form_a" id="form_a"></a>
+	<div ng-show="historicalevent_title">
 		<form action="#" name="neweventForm" role="form"  ng-submit="submitFormAddEvent()" novalidate >
-
-
-    
-
-<!--
+			<!--
 			<div class="form-group" ng-show="events">
 				<label for="historicalEvents">Historical events:</label>
 					<div>
@@ -187,14 +209,14 @@
             			</select>					
       				</div>
 			</div>
--->			
+			-->			
+			<br/>
 			<div class="form-group" ng-class="{ 'has-error' : neweventForm.title.$invalid && !neweventForm.title.$pristine }">
             	<label for="titleHE" class="mandatory">Title:</label> {{historicalevent_title}}
             	<input type="hidden" maxlength="80" size="60" name="idHE" id="idHE" class="form-control" ng-model="historicalevent_id">
             	<input type="hidden" maxlength="80" size="60" name="titleHE" id="titleHE" class="form-control" ng-model="historicalevent_title">
             	<p ng-show="neweventForm.title.$invalid && !neweventForm.title.$pristine" class="help-block">A title is required.</p>
         	</div>
-
 
 			<div class="form-group" ng-controller="DateController">
                 <label for="startDate">Start date:</label> {{historicalevent_startDate | date:'longDate'}}
@@ -252,6 +274,9 @@
             <div class="form-group">
 				<label for="Description">Color:</label>
 				<div>
+					<input type='color' name='color' ng-model="historicalevent_color_palete"  />
+
+					<!--
 					<spectrum-colorpicker
   						ng-model="historicalevent_color_palete"
   							options="{
@@ -261,7 +286,7 @@
   								preferredFormat: 'hex'
   							}">
 					</spectrum-colorpicker>					
-
+					-->
 					<input type="hidden"
                            id="historicalevent_color"
                            name="historicalevent_color"
@@ -285,13 +310,14 @@
 		</form>		
 	</div>   
 
-			<div class="modal-footer">
-				<!--		
-				<a ng-disabled="neweventForm.$invalid" href="" ng-click="addAnotherHistoricalEvent('dynamicContainer'); rePlotGraph(); ok();" class="button btn btn-success" id="addmetric">Link event</a>
-				-->
-				<button ng-disabled="!historicalevent_id" href="" ng-click="addAnotherHistoricalEvent('dynamicContainer'); rePlotGraph(); ok();" class="btn btn-warning" id="addmetric">Link event</button>				
-    			<button class="btn btn-primary" ng-click="cancel()">Close</button>
-    			<a href="#/events/create"  target="_blank" class="btn btn-default" id="addmetric">Create a new event</a>
-			</div>
+	<a name="form_buttons" id="form_buttons"></a>
+	<div class="modal-footer">
+		<!--		
+		<a ng-disabled="neweventForm.$invalid" href="" ng-click="addAnotherHistoricalEvent('dynamicContainer'); rePlotGraph(); ok();" class="button btn btn-success" id="addmetric">Link event</a>
+		-->
+		<button ng-disabled="!historicalevent_id" href="" ng-click="addAnotherHistoricalEvent('dynamicContainer'); rePlotGraph(); ok();" class="btn btn-warning" id="addmetric">Link event</button>				
+		<button class="btn btn-primary" ng-click="cancel()">Close</button>
+		<a href="#/events/create"  target="_blank" class="btn btn-default" id="addmetric">Create a new event</a>
+	</div>
 
 </div>

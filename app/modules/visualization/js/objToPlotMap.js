@@ -1,23 +1,41 @@
 var policycompass = policycompass || {'version':0.1, 'controller':{}, 'viz': {} ,'extras': {} };
 
 
+   
+
 policycompass.viz.mapW_datamaps = function(options)
 {
 	var self = {};
     // Get options data
     for (key in options){
+    	//console.log(key);
         self[key] = options[key];
     }
 	self.parentSelect = self.idName;
 	self.parentSelect = self.parentSelect.replace("undefined","");
+
+	//console.log("*************");
+	//console.log(self.data);
+	//console.log("self.from_country="+self.from_country);
+	//console.log("self.to_country="+self.to_country);
+	
+	//console.log("self.idName");
+	//console.log(self.idName);
+		
+	//console.log("self.parentSelect");
 	//console.log(self.parentSelect);
 	
 	var width = self.width + self.margin.left + self.margin.left;
     var height = self.height + self.margin.top + self.margin.bottom;
 
+
+    var zoomFactor = 0.9,
+	enabled = true;
+              
+              
 	var graticule = d3.geo.graticule();
 
-	self.svg = d3.select(self.parentSelect).append("svg")
+	self.svg = d3.select(self.parentSelect).append("svg")	
 			.attr("width", width)
 			.attr("height", height)
 			.attr("class", "mapa")
@@ -25,6 +43,10 @@ policycompass.viz.mapW_datamaps = function(options)
 			;	
 
 	var projection;
+
+	var topo,projection,path,svg,g;
+
+		
 	
 	var λ = d3.scale.linear()
 	    //.domain([0, width])
@@ -36,114 +58,327 @@ policycompass.viz.mapW_datamaps = function(options)
 	    .domain([self.margin.top, self.height])
 	    .range([90, -90]);
     
-            
-	
     
-var map_to_plot = new Datamap({
-  element: document.getElementById(self.parentSelect),  
-  projection: self.projection,
-	setProjection: function(element) {
-	
+    var colors = d3.scale.category10();
+    
+    var objectColores = {};
+    var objectColoresValues = {};
+    
+    objectColores['defaultFill']= "#ABDDA4";
 
-	if (self.projection=='mercator')
-		{
-			projection = d3.geo.mercator()
-				.translate([(width/2), (height/2)])
-				.scale( width / 2 / Math.PI)
-				.precision(.1);
-				;			
-		}		
-		else if (self.projection=='conicConformal')
-		{
-			projection = d3.geo.conicConformal()
-			    //.rotate([98, 0])
-			    .center([0, 0])
-			    //.parallels([29.5, 45.5])
-			    //.scale(1000)
-			    .scale( width / 2 / Math.PI)
-			    //.scale( width / 4 / Math.PI)
-			    //.translate([width / 2, height / 2])
-			    .precision(.1);
-		}		
-		else if (self.projection=='equirectangular')
-		{
 
-			projection = d3.geo.equirectangular()
-				.translate([(width/2), (height/2)])
-				//.scale( width / 2 / Math.PI)
-				.precision(.1);
-				;
-	
-				/*
-			projection = d3.geo.transverseMercator()
-    			.scale((width + 1) / 2 / Math.PI)
-    			.translate([width / 2, height / 2]);
-    			*/						
+//console.log(self.data);
+
+var listDataToPlot = [];
+
+//	console.log("self.from_country="+self.from_country);
+//	console.log("self.to_country="+self.to_country);
+
+function getDate(d) {
+    		return new Date(d);
 		}
-		else if (self.projection=='orthographic')
+
+
+var dates = {
+    convert:function(d) {
+        // Converts the date in d to a date-object. The input can be:
+        //   a date object: returned without modification
+        //  an array      : Interpreted as [year,month,day]. NOTE: month is 0-11.
+        //   a number     : Interpreted as number of milliseconds
+        //                  since 1 Jan 1970 (a timestamp) 
+        //   a string     : Any format supported by the javascript engine, like
+        //                  "YYYY/MM/DD", "MM/DD/YYYY", "Jan 31 2009" etc.
+        //  an object     : Interpreted as an object with year, month and date
+        //                  attributes.  **NOTE** month is 0-11.
+        return (
+            d.constructor === Date ? d :
+            d.constructor === Array ? new Date(d[0],d[1],d[2]) :
+            d.constructor === Number ? new Date(d) :
+            d.constructor === String ? new Date(d) :
+            typeof d === "object" ? new Date(d.year,d.month,d.date) :
+            NaN
+        );
+    },
+    compare:function(a,b) {
+        // Compare two dates (could be of any type supported by the convert
+        // function above) and returns:
+        //  -1 : if a < b
+        //   0 : if a = b
+        //   1 : if a > b
+        // NaN : if a or b is an illegal date
+        // NOTE: The code inside isFinite does an assignment (=).
+        return (
+            isFinite(a=this.convert(a).valueOf()) &&
+            isFinite(b=this.convert(b).valueOf()) ?
+            (a>b)-(a<b) :
+            NaN
+        );
+    },
+    inRange:function(d,start,end) {
+        // Checks if date in d is between dates in start and end.
+        // Returns a boolean or NaN:
+        //    true  : if d is between start and end (inclusive)
+        //    false : if d is before start or after end
+        //    NaN   : if one or more of the dates is illegal.
+        // NOTE: The code inside isFinite does an assignment (=).
+       return (
+            isFinite(d=this.convert(d).valueOf()) &&
+            isFinite(start=this.convert(start).valueOf()) &&
+            isFinite(end=this.convert(end).valueOf()) ?
+            start <= d && d <= end :
+            NaN
+        );
+    }
+}
+
+//console.log(self.data);
+
+for (i in self.data)
+{
+//	console.log(self.data[i]);
+//	console.log(self.data[i].Id);
+//	console.log(self.data[i].Data);
+	var sum = 0;
+	for (j in self.data[i].Data)
+	{
+	//	console.log(self.data[i].Data[j]);
+//		console.log("---------------->j="+j);	
+//		console.log("from date="+getDate(self.from_country));
+//		console.log("to date="+getDate(self.to_country));
+//		console.log("row date="+getDate(j));
+		
+		//if ( (getDate(self.from_country)>=getDate(j)) && (getDate(self.to_country)<=getDate(j)))
+		
+		//console.log("from_country="+self.from_country);
+		//console.log("to_country="+self.to_country);
+		
+		if (dates.inRange (getDate(j), getDate(self.from_country), getDate(self.to_country)))
 		{
-			projection = d3.geo.orthographic()
-			   // .scale(475)
-			    .translate([width / 2, height / 2])
-			    .clipAngle(90)
-			    .precision(.1)
-			    ;			
-		}
-		else if (self.projection=='azimuthalEqualArea')
-		{
-			projection = d3.geo.azimuthalEqualArea()
-			    .clipAngle(180 - 1e-3)
-			    //.scale(237)
-			    .translate([width / 2, height / 2])
-			    .precision(.1);		
+	//		console.log("add TRUE --"+self.data[i].Data[j]);
+			sum = sum + self.data[i].Data[j];	
 		}
 		else
 		{
-			projection = d3.geo.mercator()
+		//	console.log("add FALSE");
+		}
+		
+	}
+	
+	sum = Math.round(sum,2);
+	
+	if (sum>0)
+	{
+		listDataToPlot[self.data[i].Id]= colors(sum);
+		objectColores[sum] = colors(sum);		
+	}
+}
+
+//console.log(listDataToPlot);
+    /*
+    for (var i=1; i < 5; i++) {
+       objectColores['color_'+i] = colors(i);
+       objectColoresValues['color_'+i] = i;
+    };
+	*/
+   // console.log(objectColores);
+    
+
+    //console.log(self.parentSelect);
+    
+var map_to_plot = new Datamap({
+	scope: 'world',
+	element: document.getElementById(self.parentSelect),  
+	projection: self.projection,
+		setProjection: function(element, options) {
+
+			if (self.projection=='mercator')
+			{
+				projection = d3.geo.mercator()	
+				.center([0, 40])
+				.translate([(width/2), (height/2)])
+				.scale( width / 3.8 / Math.PI)
+				.precision(.1);
+						
+			}		
+			else if (self.projection=='conicConformal')
+			{
+				projection = d3.geo.conicConformal()
+			    //.rotate([98, 0])
+			    .center([0, 40])
+			    //.parallels([29.5, 45.5])
+			    //.scale(1000)
+			    .translate([(width/2), (height/2)])
+			    .scale( width / 3 / Math.PI)
+			    //.scale( width / 4 / Math.PI)
+			    //.translate([width / 2, height / 2])
+			    .precision(.1);
+			}		
+			else if (self.projection=='equirectangular')
+			{
+				projection = d3.geo.equirectangular()
+				.translate([(width/2), (height/2)])				
+				.scale( (width) / 3 / Math.PI)
+				//.scale( width / 2 / Math.PI)
+				.precision(.1);
+				;				
+				//projection = d3.geo.transverseMercator()
+	    		//	.scale((width + 1) / 2 / Math.PI)
+	    		//	.translate([width / 2, height / 2]);
+	    									
+			}
+			else if (self.projection=='orthographic')
+			{
+				projection = d3.geo.orthographic()
+				//.scale(475)
+				.scale( (width) / 2 / Math.PI)
+			    .translate([width / 2, height / 2])
+			    .clipAngle(90)			    
+			    .precision(.1)			    
+			    ;			
+			}
+			else if (self.projection=='azimuthalEqualArea')
+			{
+				projection = d3.geo.azimuthalEqualArea()
+			    .clipAngle(180 - 1e-3)
+			    //.scale(237)
+			    .scale( (width) / 2 / Math.PI)
+			    .translate([width / 2, height / 2])
+			    .precision(.1);		
+			}
+			else
+			{
+				projection = d3.geo.mercator()
 				.translate([(width/2), (height/2)])
 				.scale( width / 2 / Math.PI)
 				.precision(.1);
 				;				
-		}
+			}
+
+			
       
-      
-    var path = d3.geo.path()
-      .projection(projection);
-    
-    return {path: path, projection: projection};
-  },
-  height: height,
-  width: width,
-  done: function() {
+      /*
+    	var path = d3.geo.path()
+      			.projection(projection);
+*/
+
+		path = d3.geo.path().projection(projection);
+		//console.log("path");
+		//console.log(path);
+				
+		self.svg = d3.select(self.parentSelect).append("svg")
+			.attr("width", width)
+			.attr("height", height)
+			.attr("class", "mapa")
+			//.call(zoom)
+			//.on("click", click)			
+			.append("g")			
+			//.on("mousemove", mousemove)
+			//.on("mousedown", mousedown);
+			;
+			
+			/*
+			
+			var lat = 0;
+			//if (self.showMovement)
+			if (1==1)
+			{
+	
+				setInterval(function(){
+				console.log("self.projection="+self.projection+"--lat="+lat);
+				//lat = lat +.5
+				lat = lat + 5
+		 		projection.rotate([lat,0]);
+		  		self.svg.selectAll("path")
+		      		.attr("d", path)
+		      		;
+		    
+				},50);
+				
+				
+				
+		    }	*/
+    		
+    		return {path: path, projection: projection};
+  		},
+  		height: height,
+  		width: width,
+  		//done: function() {
+  		//	
+  		//},
+
+		
+        		
+		geographyConfig: {
+			highlightBorderColor: '#bada55',
+              //popupOnHover: false,
+              highlightOnHover: true,
+              borderColor: '#444',
+              borderWidth: 0.5
+            },
+
+			geographyConfig: 
+			{
+				popupOnHover: !self.small,
+    			highlightOnHover: !self.small		
+			
+  			},
   
+
+/*
+  geographyConfig: {  	
+    highlightBorderColor: '#bada55',
+
+   popupTemplate: function(geography, data) {
+   		return '<div class="hoverinfo">'+ geography.properties.name +'<br/>'+data.value;
+    },
+   
+    highlightBorderWidth: 2
   },
-  
+    */
+  /*
   fills: {
     defaultFill: "#ABDDA4",
     authorHasTraveledTo: "#fa0fa0"
   },
-  data: {
-    USA: { fillKey: "authorHasTraveledTo" },
-    JPN: { fillKey: "authorHasTraveledTo" },
-    ITA: { fillKey: "authorHasTraveledTo" },
-    CRI: { fillKey: "authorHasTraveledTo" },
-    KOR: { fillKey: "authorHasTraveledTo" },
-    DEU: { fillKey: "authorHasTraveledTo" },
-  }
+  */
+	fills: objectColores,
+	//data: {
+	//	USA: { fillKey:'color_'+2, value: 2 },
+	//	JPN: { fillKey:'color_'+4, value: 4 },
+	//	ITA: { fillKey:'color_'+6, value: 6 },
+	//	ARG: { fillKey:'color_'+2, value: 2 },
+	//	ESP: { fillKey:'color_'+4, value: 4 },
+	//	DEU: { fillKey:'color_'+2, value: 2 }
+	//},
+	done: function(datamap) {
+		if (self.showZoom)
+		{
+			datamap.svg.call(d3.behavior.zoom().on("zoom", redraw));
+			function redraw() {
+	                datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+			}
+			
+
+			
+		}
+		
+
+	}
+		
+
+		
+		  
 });
 
-var colors = d3.scale.category10();
 
-map_to_plot.updateChoropleth({
-    USA: colors(Math.random() * 10),
-    RUS: colors(Math.random() * 100),
-    AUS: { fillKey: 'authorHasTraveledTo' },
-    BRA: colors(Math.random() * 50),
-    CAN: colors(Math.random() * 50),
-    ZAF: colors(Math.random() * 50),
-    IND: colors(Math.random() * 50),
-  });
 
+
+//console.log("---------listDataToPlot---");
+//console.log(listDataToPlot);
+ 
+map_to_plot.updateChoropleth(listDataToPlot); 
+  
+/*
 map_to_plot.bubbles([
  {name: 'Bubble 1', latitude: 21.32, longitude: -7.32, radius: 45, fillKey: 'gt500'},
  {name: 'Bubble 2', latitude: 12.32, longitude: 27.32, radius: 25, fillKey: 'eq0'},
@@ -154,8 +389,9 @@ map_to_plot.bubbles([
    return "<div class='hoverinfo'>Bubble for " + data.name + "";
  }
 });
+*/
 
-
+/*
 map_to_plot.arc([
   {
       origin: {
@@ -193,12 +429,24 @@ map_to_plot.arc([
   }
 ],  {strokeWidth: 1, arcSharpness: 1.4});
           
+*/
 
 
+//map_to_plot.legend();
+//map_to_plot.legend({defaultFillName: 'Undecided'});
+//map_to_plot.legend({legendTitle: 'Map Legend!'});
 
-var lat = 0;
-var path = d3.geo.path().projection(projection);
 
+if (self.legend)
+{
+ map_to_plot.legend({
+    legendTitle : "Legend",
+    defaultFillName: "No data",    
+    labels: objectColoresValues,
+  });	
+}
+
+			
 
 
 }
