@@ -391,7 +391,11 @@ angular.module('pcApp.visualization.controllers.visualization', [
     return {
     	
     	baseVisualizationsCreateController: function($scope, $route, $routeParams, $modal, Event, Metric, Visualization, $location, helper, $log, API_CONF) {
-		
+
+
+		$scope.colorScale = d3.scale.category20();
+		//console.log($scope.colorScale);
+					
 		$scope.rangeDatesSliderMin = 0;
 		$scope.rangeDatesSliderMax = 0;
 		
@@ -1230,7 +1234,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
         	// Open a confirmation dialog
         	var dlg = dialogs.confirm(
             	"Are you sure?",
-            	"Do you want to delete '"+metrictitle+"' from the list of metrics?");
+            	"Do you want to delete '"+metrictitle+"' from the list of datasets?");
         	dlg.result.then(function () {
         		
         		//console.log(metriclistIn);
@@ -1269,8 +1273,11 @@ angular.module('pcApp.visualization.controllers.visualization', [
 			//console.log("show modal");
 			      
 	   		var s= document.getElementById("startDatePosX");
+	   		var e= document.getElementById("endDatePosX");
+	   		
 	   		//console.log("s.value="+s.value);        
 	   		dateRec = s.value;
+	   		dateRecEnd = e.value;
 			//console.log("dateRec="+dateRec+"--now="+Date.now());
 			if (dateRec)
 			{
@@ -1287,6 +1294,24 @@ angular.module('pcApp.visualization.controllers.visualization', [
 				//$scope.startDate = $filter("date")(Date.now(), 'yyyy-MM-dd');	
 				$scope.startDate = "";
 			}
+
+			if (dateRecEnd)
+			{
+				//dateRec = '2014-01-01';
+				//console.log("dateRec="+dateRec);
+				dateRecEnd = dateRecEnd.replace(/-/g,"/");
+				var res = dateRecEnd.split("/");
+				var newDate = res[2]+"-"+res[0]+"-"+res[1];
+				//console.log("newDate="+newDate);
+				$scope.endDate = (newDate);
+			}
+			else
+			{
+				//$scope.startDate = $filter("date")(Date.now(), 'yyyy-MM-dd');	
+				$scope.endDate = "";
+			}
+			
+			//console.log("$scope.endDate="+$scope.endDate);
 			
 			var arrayIdsMetricsSelected = [];
 			
@@ -1314,7 +1339,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
 	  		};
 	
 	        $scope.opts.resolve.item = function() {
-	    		return angular.copy({name:$scope.name, startDate:$scope.startDate, metricsArray: arrayIdsMetricsSelected}); // pass name to Dialog
+	    		return angular.copy({name:$scope.name, startDate:$scope.startDate, endDate:$scope.endDate, metricsArray: arrayIdsMetricsSelected}); // pass name to Dialog
 			}
 	        
 	  		var modalInstance = $modal.open($scope.opts);
@@ -1482,6 +1507,8 @@ angular.module('pcApp.visualization.controllers.visualization', [
 		$scope.rePlotGraph = function() {
 									
 			//console.log("--rePlotGraph--");		
+			//console.log($scope.dataset_color_palete_)
+			
 			var arrayJsonFiles = [];
 			var datosTemporales = new Object();
 			//var elems = $scope.MetricSelectediId_;
@@ -1489,6 +1516,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
 			
 //			console.log(elems);
 			var elemsIndex = $scope.MetricSelectediIndex_;
+
 			
 //			console.log($scope.resolution);
 //			console.log($scope.resolution.value);
@@ -1542,6 +1570,12 @@ angular.module('pcApp.visualization.controllers.visualization', [
 							
 							identities =  $scope.IndividualDatasetCheckboxes_[i];
 							identityColors =  $scope.dataset_color_palete_[i];
+							//console.log("i="+i);
+							//console.log("identities");
+							//console.log(identities);
+							//console.log("identityColors");
+							//console.log(identityColors);
+							
 						}
 						else
 						{
@@ -1613,6 +1647,9 @@ angular.module('pcApp.visualization.controllers.visualization', [
 							var identitiesvalues = "";
 							//console.log(puntero);
 							identitiesvalues = $scope.IndividualDatasetCheckboxes_[puntero];
+							
+							//console.log("$scope.IndividualDatasetCheckboxes_");
+							//console.log($scope.IndividualDatasetCheckboxes_);
 							//console.log("identitiesvalues");
 							//console.log(identitiesvalues);
 							
@@ -1641,10 +1678,14 @@ angular.module('pcApp.visualization.controllers.visualization', [
 								
 //								console.log($scope.dataset_color_palete_);
 //								console.log($scope.dataset_color_palete_[puntero]);
-								
+													
 								var valueIdentityColor = $scope.dataset_color_palete_[puntero];
+								
+								//console.log("valueIdentityColor");
+								//console.log(valueIdentityColor);
 								arrayColorsDatasets.push(valueIdentityColor);
-//								console.log("-------->valueIdentityColor="+valueIdentityColor)
+
+
 								arrayJsonFiles.push(jsonFile);
 								cntMetrics = cntMetrics+1;
 								
@@ -1781,7 +1822,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
 					 	//console.log($scope.optionToPlot[arguments[i].id]);
 					 	
 					 	var colorsIdentities=$scope.optionToPlot[arguments[i].id].identitiescolors;
-					 	
+					 	//console.log("colorsIdentities="+colorsIdentities);
 						//console.log("$scope.typeToPlot="+$scope.typeToPlot);
 						
 						if ( ($scope.typeToPlot==='map_1') 
@@ -1886,15 +1927,39 @@ angular.module('pcApp.visualization.controllers.visualization', [
 									//console.log("colorsIdentities="+colorsIdentities[j+1]);
 									var lineColor = '#000000';
 									
+									//console.log(colorsIdentities);
 									if (colorsIdentities)
 									{
 										//console.log(colorsIdentities.length);
 										//if (colorsIdentities.length>=(j+1))
+										
+										var cntObject=0;
+										
+										for(var index in colorsIdentities) {      										
+
+      										if (j==cntObject)
+      										{
+      											
+      										
+      											if (colorsIdentities[index])
+												{											
+													lineColor = colorsIdentities[index];
+												}
+      										}
+      										
+      										cntObject=cntObject+1;
+ 										}
+										/*
 										if (colorsIdentities[j+1])
 										{											
 											lineColor = colorsIdentities[j+1];
 										}
-									}	
+										*/
+									}
+									else
+									{
+										lineColor = $scope.colorScale(arguments[i]['data']['table'][j].individual.title)
+									}
 									//console.log("lineColor="+lineColor);
 									
 																				
@@ -1920,6 +1985,23 @@ angular.module('pcApp.visualization.controllers.visualization', [
 										
 										var pieColor = '#000000';
 
+										var cntObject=0;
+										
+										for(var index in colorsIdentities) {      										
+
+      										if (j==cntObject)
+      										{
+      											
+      										
+      											if (colorsIdentities[index])
+												{											
+													lineColor = colorsIdentities[index];
+												}
+      										}
+      										
+      										cntObject=cntObject+1;
+ 										}
+ 										/*
 										if (colorsIdentities)
 										{
 											//if (colorsIdentities.length>=(j+1))
@@ -1927,7 +2009,8 @@ angular.module('pcApp.visualization.controllers.visualization', [
 											{
 												pieColor = colorsIdentities[j+1];
 											}
-										}										
+										}	
+										*/									
 										pieColor = '';
 										var arrayPieTmp = {
 										'Key': value,
@@ -2388,7 +2471,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
 	function($scope, $route, $routeParams, $modal, Event, Metric, Visualization, VisualizationByMetric, VisualizationByEvent, $location, helper, dialogs, $log, API_CONF) {
 	
 	//this.message = "Hello VisualizationsDetailController";
-	console.log("Hello VisualizationsDetailController");
+	//console.log("Hello VisualizationsDetailController");
 	//alert($routeParams.visualizationId);
     //$scope.test = "hallo---";
     
@@ -2610,7 +2693,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
 	function($filter, $scope, $route, $routeParams, $modal, Event, Metric, Visualization, $location, helper, $log, API_CONF) {
 
 		
-//	console.log("controller VisualizationsEditController");
+	//console.log("controller VisualizationsEditController");
 
 	//console.log("-----------");
 	//console.log($scope.idvisulist);
@@ -2806,6 +2889,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
 			$scope.ListIndividualDatasetCheckboxes_ = [];
 			$scope.dataset_color_palete_ = [];
 			
+			
 			$scope.individualCombo_value_ = [];
 			
 			$scope.optionsCombo_ = [];
@@ -2890,6 +2974,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
 	    				var tmp = dataFilter[1].split(";");	
 	    				//$scope.dataset_color_palete_[id] = tmp;
 	    				$scope.dataset_color_palete_[id]=[];
+	    				
 	    				for (j in $scope.ListIndividualDatasetCheckboxes_[id])
 	    				{
 //	    					console.log(id);
@@ -3079,7 +3164,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
 		for (j in metricListIn)
 		{
 			i=metricListIn[j].id;
-			console.log("i="+i);	
+			//console.log("i="+i);	
 			//console.log("i="+i+"---$scope.MetricSelectediIndex_["+i+"]="+$scope.MetricSelectediIndex_[i])
 			//console.log("MetricSelectediIndex_ i="+i);
 			$scope.MetricSelectediId_[i] = i;
@@ -3101,8 +3186,8 @@ angular.module('pcApp.visualization.controllers.visualization', [
 				};
 				*/
 				
-				console.log(myindex);
-				console.log($scope.IndividualDatasetCheckboxes_[myindex]);
+				//console.log(myindex);
+				//console.log($scope.IndividualDatasetCheckboxes_[myindex]);
 				
 				for (var i=0; i < $scope.IndividualDatasetCheckboxes_[myindex].length; i++) 
 				{
@@ -3833,9 +3918,12 @@ angular.module('pcApp.visualization').filter('pagination', function()
 	//console.log($scope.metricslist)
 	
 	// in controller		
+	
+	//console.log(item);
+	
 	$scope.startDateToFilter=item.startDate;
 	//$scope.startDateToFilter="";
-	$scope.endDateToFilter="";
+	$scope.endDateToFilter=item.endDate;
 	
 	//$scope.startDateToFilter='2014-05-28';
 	
@@ -3845,7 +3933,7 @@ angular.module('pcApp.visualization').filter('pagination', function()
 	$scope.paginationEvents = "";
 	
 	for (var i=0; i < $scope.metricslist.length; i++) {
-		console.log($scope.metricslist[i]);
+		//console.log($scope.metricslist[i]);
 		var metricId =$scope.metricslist[i]
 
 		var arrayHE=[];
@@ -3922,7 +4010,7 @@ angular.module('pcApp.visualization').filter('pagination', function()
 					
 		});		
 	  
-	  
+	  $scope.showLoading = false;
 	}
 	
 	

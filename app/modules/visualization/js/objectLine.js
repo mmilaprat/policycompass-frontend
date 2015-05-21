@@ -563,7 +563,8 @@ return 0;}
     		//.orient("left")
     		//.orient("right")
     		.orient(orientText)
-    		.tickFormat(d3.format("."+formatdecimal+"s"))
+    		//.tickFormat(d3.format("."+formatdecimal+"s"))
+    		.tickFormat(d3.format(".2s"))
     		;
 
 		var lineFunction = d3.svg.line()		
@@ -884,7 +885,8 @@ return 0;}
 					//.orient("left")
 					//.orient("right")
 					.orient(orientText)
-					.tickFormat(d3.format("."+formatdecimal+"s"));
+					//.tickFormat(d3.format("."+formatdecimal+"s"));
+					.tickFormat(d3.format(".2s"));
 				}
 				else
 				{
@@ -900,7 +902,9 @@ return 0;}
 					var posFinalXAxeY = self.width;
 					//console.log(posFinalXAxeY)
 					//console.log("valuesY="+valuesY);
-					posFinalXAxeY = posFinalXAxeY + self.distanceXaxes*(i-1)
+					posFinalXAxeY = posFinalXAxeY + (self.distanceXaxes+formatdecimal)*(i-1)
+					//console.log(posFinalXAxeY);
+					//console.log(formatdecimal);
 					//posFinalXAxeY = posFinalXAxeY + self.margin.right*(i-1)
 					//console.log(posFinalXAxeY)
 					//console.log(self.yArray[i]);
@@ -909,7 +913,8 @@ return 0;}
 					.scale(self.yArray[i])
 					.ticks(10)
 					.orient("right")
-					.tickFormat(d3.format("."+formatdecimal+"s"));
+					//.tickFormat(d3.format("."+formatdecimal+"s"));
+					.tickFormat(d3.format(".2s"));
 				}
 				
 				//console.log(self.labelY);
@@ -2092,9 +2097,15 @@ return 0;}
 						posXinvers= format(posXinvers);
 						posXinvers = posXinvers.replace(/-/g,"/");
 					}
-				}				
+				}			
+				
+				var format = d3.time.format("%m-%d-%Y");
+				var maxDateGraph = format(self.maxDate);
+				maxDateGraph = maxDateGraph.replace(/-/g,"/");
+				
       			//$('input[name="startDate"]').val(posXinvers);      			
-      			$('input[name="startDatePosX"]').val(posXinvers);      		
+      			$('input[name="startDatePosX"]').val(posXinvers);       			     	
+      			$('input[name="endDatePosX"]').val(maxDateGraph);
       			//showModal();	
 				//dateToSet = posXinvers;
 				//console.log("dateToSet="+dateToSet);

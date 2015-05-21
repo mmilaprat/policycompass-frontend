@@ -57,6 +57,7 @@
             	<div ng-show="canPlotGarph">          	
 	            	<div ng-show="((1==1)  || isSelectedSon('graph_line') || isSelectedSon('graph_pie') || isSelectedSon('graph_bars')) && (ListMetricsFilter.length>0)" class="graphContainerdiv">
 						<input type="hidden" id="startDatePosX" name="startDatePosX" value="">
+						<input type="hidden" id="endDatePosX" name="endDatePosX" value="">
 <!--
 <div id="maplegend" class="maplegend"></div>
 -->
@@ -321,7 +322,10 @@
 															</label>
 														</td>
 														<td ng-show="isSelectedSon('graph_line')">
-															<input type='color' name='color' ng-model="dataset_color_palete_[metric.id][option.id]" ng-model-onblur ng-change="rePlotGraph()" />
+															<input type='color' name='color'
+															ng-init=" dataset_color_palete_[metric.id][option.id] = dataset_color_palete_[metric.id][option.id] == null ? colorScale(option.title) : dataset_color_palete_[metric.id][option.id] "
+															ng-model="dataset_color_palete_[metric.id][option.id]" 
+															ng-model-onblur ng-change="rePlotGraph()" />
 														</td>
 													</tr>
 												</body>
