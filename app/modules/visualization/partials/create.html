@@ -217,6 +217,12 @@
 									</label>
 								</div>
 								
+								<div id="div_showZoom" ng-show="isSelectedParent(1)" class="on_check">
+									<label class="checkbox-inline">
+										<input ng-model="showBubbles" type="checkbox" ng-click="rePlotGraph();" name="showBubbles"  id="showBubbles" class="checkbox filterCheckBox"> View as bubble marker
+									</label>
+								</div>
+								
 								<div ng-show="ListMetricsFilter.length>0" id="div_showAsPercentatge" class="on_check">
 									<label class="checkbox-inline">
 										Resolution <select id="resolution" ng-change="rePlotGraph();" ng-model="resolution" ng-options="opt as opt.label for opt in resolutionoptions"></select>

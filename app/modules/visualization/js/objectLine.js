@@ -88,6 +88,7 @@ policycompass.viz.line = function(options)
  
 		//This is the accessor function we talked about above
 		var lineFunction = d3.svg.line()
+			//.x(function(d) {return d.x;})
 			.x(function(d) {return d.x;})
 			.y(function(d) {return d.y;})
 			.interpolate("linear")
@@ -163,6 +164,7 @@ policycompass.viz.line = function(options)
 		var showAreas = self.showAreas;
 		
 		var showPoints = self.showPoints;
+		//console.log("showPoints="+showPoints);
 		var showLabels = self.showLabels;
 		var showGrid = self.showGrid;
 		var showAsPercentatge = self.showAsPercentatge
@@ -577,7 +579,18 @@ return 0;}
     			//console.log("d.posX="+d.posX)
     			 //console.log(d.xOriginal);
     			//return self.x(d.posX);
-    			return self.xScale(getDate(d.xOriginal));
+    			//return self.xScale(getDate(d.xOriginal));
+    			var resX =d.xOriginal;
+    			if (self.xaxeformat=='sequence')
+                {
+                	return (self.xScale((resX)));
+                }
+                else
+                {
+                	return (self.xScale(getDate(resX)));	
+                }
+    			
+    			
     			})
     		.y(function(d) {
     			//console.log("-----")	
@@ -1111,7 +1124,18 @@ return 0;}
 				
 				var area = d3.svg.area()
     				.x(function(d) { 
-    				return self.xScale(getDate(d.xOriginal));
+    				//return self.xScale(getDate(d.xOriginal));
+    				
+    				
+						var resX =d.xOriginal;
+	    				if (self.xaxeformat=='sequence')
+	                	{
+	                		return (self.xScale((resX)));
+	                	}
+	                	else
+	                	{
+	                		return (self.xScale(getDate(resX)));	
+	                	}
     				})
     				.y0(self.height)
     				.y1(function(d) { 
@@ -1164,6 +1188,7 @@ return 0;}
       		}
           	if ((showLines) && (cntpasadas==2))
 		  	{
+		  		//console.log("data");
 		  		//console.log(data);
 		  		
 	  			var path = self.svg.append("path")
@@ -1230,10 +1255,11 @@ return 0;}
 			    		///posX = self.xScaleXInversa(self.xInversa(posX));	
 			    		///posY = self.yInversa(posY);
 			    		//console.log("posX="+posX);
-						//console.log("posY="+posY);			    	      			
-	      				$('input[name="posx"]').val(posX);
-						$('input[name="posy"]').val(posY);		
-	      				$('#basic-modal-content').modal();
+						//console.log("posY="+posY);
+									    	      			
+	      				//$('input[name="posx"]').val(posX);
+						//$('input[name="posy"]').val(posY);		
+	      				//$('#basic-modal-content').modal();
 	      				
 	      			})
 	      			;	
@@ -1460,7 +1486,8 @@ return 0;}
 					
 					.on("click", function() {
 						//console.log("-----key="+d.Key.replace(/\s+/g, ''))
-                		// Determine if current line is visible 
+                		// Determine if current line is visible
+                		
                 		if (self.modeGraph=='view')
 						{                		
 	                		var active   = d.active ? false : true,
@@ -2078,6 +2105,13 @@ return 0;}
 				mousemove();							
 			})			
       		.on("click", function(d,i) {
+      			
+      			if (self.xaxeformat=='sequence')
+      			{}
+      			else
+      			{
+      				
+      			
 				var posMouse = d3.mouse(this);
 				var posX = posMouse[0];
 				var posY = posMouse[1];		
@@ -2110,6 +2144,7 @@ return 0;}
 				//dateToSet = posXinvers;
 				//console.log("dateToSet="+dateToSet);
       			//$('#basic-modal-content').modal();
+      			}
       		})      		
 			.append("g")
 				.attr("transform", "translate(" + self.margin.left + "," + self.margin.top + ")");

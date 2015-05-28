@@ -15,6 +15,7 @@ angular.module('pcApp.common.directives.mapscharts', [
         	mode: '=mode',
         	showLegend: '=showLegend',
         	showZoom: '=showZoom',
+        	showBubbles: '=showBubbles',
         	projection: '=projection',
         	fromcountry: '=fromcountry',
         	tocountry: '=tocountry'
@@ -35,7 +36,7 @@ angular.module('pcApp.common.directives.mapscharts', [
            // console.log("controller pcMapsChart");
 
 
-            $scope.$watch('fromcountry', function(showZoom) {
+            $scope.$watch('fromcountry', function(fromcountry) {
 				if ($scope.numbers1)
 				{
 					$scope.directivePlotMapChart();	
@@ -43,7 +44,7 @@ angular.module('pcApp.common.directives.mapscharts', [
             });
             
             
-            $scope.$watch('tocountry', function(showZoom) {
+            $scope.$watch('tocountry', function(tocountry) {
 				if ($scope.numbers1)
 				{
 					$scope.directivePlotMapChart();	
@@ -52,6 +53,13 @@ angular.module('pcApp.common.directives.mapscharts', [
                         
 
             $scope.$watch('showZoom', function(showZoom) {
+				if ($scope.numbers1)
+				{
+					$scope.directivePlotMapChart();	
+				}				
+            });
+
+            $scope.$watch('showBubbles', function(showBubbles) {
 				if ($scope.numbers1)
 				{
 					$scope.directivePlotMapChart();	
@@ -126,6 +134,7 @@ angular.module('pcApp.common.directives.mapscharts', [
 							font_size = font_size / 5;							
 							$scope.showLegend = false;	
 							$scope.showZoom = false;
+							$scope.showBubbles = false;
 							$scope.showMovement = false;					
 					}
 					else
@@ -152,6 +161,7 @@ angular.module('pcApp.common.directives.mapscharts', [
 						'legend': $scope.showLegend,
 						'projection': $scope.projection,
 						'showZoom': $scope.showZoom,
+						'showBubbles': $scope.showBubbles,
 						'showMovement': $scope.showMovemen,
 						'data': $scope.dataset,
 						'from_country': from_country,
@@ -170,6 +180,7 @@ angular.module('pcApp.common.directives.mapscharts', [
         '<div ng-hide="small" class="showFilter">' +
         '<label class="checkbox-inline"><input ng-model="showLegend" type="checkbox" name="showLegend" class="checkbox filterCheckBox"> Show Legend</label>' +
         '<label class="checkbox-inline"><input ng-model="showZoom" type="checkbox" name="showZoom" class="checkbox filterCheckBox"> Enable Zoom</label>' +
+        '<label class="checkbox-inline"><input ng-model="showBubbles" type="checkbox" name="showBubbles" class="checkbox filterCheckBox"> View as bubble marker</label>' +
         '</div>' +
         '<div id="directive_container_mapchart_{{chartid}}" class="pcchart container_graph directive_container_chart directive_container_mapchart_{{chartid}}">' +        
         '<div class="loading-container">'+

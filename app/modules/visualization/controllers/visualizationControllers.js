@@ -706,7 +706,9 @@ angular.module('pcApp.visualization.controllers.visualization', [
 								font_size = font_size / 5;
 								$scope.showLegend = false;	
 								$scope.showZoom = false;
-								$scope.showMovement = false;					
+								$scope.showBubbles = false;
+								$scope.showMovement = false;	
+								$scope.showBubbles = false;	
 						}
 						else
 						{
@@ -729,6 +731,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
 							'legend': $scope.showLegend,
 							'projection': $scope.typeToPlot,
 							'showZoom': $scope.showZoom,
+							'showBubbles': $scope.showBubbles,
 							'showMovement': $scope.showMovement,
 							'data': $scope.datasetToSendMap,
 							'from_country': from_country,
@@ -1841,6 +1844,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
 							{
 								var countryDatasetTitle = arguments[i]['spatial'][j]['title'];
 								var countryDatasetId = arguments[i]['spatial'][j]['identifier'];
+								//console.log(arguments[i]['spatial'][j]);
 								//console.log(countryDatasetTitle+"---"+countryDatasetId);
 								var arrayDataPerDate = [];
 								
@@ -1870,8 +1874,8 @@ angular.module('pcApp.visualization.controllers.visualization', [
 								//console.log(arrayDataPerDate);
 								
 								//arrayDataByCounty.push({'Id':countryDatasetId, 'Data':arguments[i]['data']['table']});
-								arrayDataByCounty.push({'Id':countryDatasetId, 'Data': arrayDataPerDate});
-								$scope.arrayDataByCounty.push({'Id':countryDatasetId, 'Data': arrayDataPerDate});
+								arrayDataByCounty.push({'Id':countryDatasetId, 'Title':countryDatasetTitle, 'Data': arrayDataPerDate});
+								$scope.arrayDataByCounty.push({'Id':countryDatasetId, 'Title':countryDatasetTitle, 'Data': arrayDataPerDate});
 							}
 							
 							//console.log(arrayDataByCounty);
@@ -2628,7 +2632,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
 	'$log', 
 	'$routeParams',
 	function($scope, Visualization, $log, $routeParams) {
-	                
+                
 		//console.log("VisualizationsController");	
 		$scope.visualizations = Visualization.query(
 			 {page: $routeParams.page
@@ -3153,6 +3157,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
         dataConfig['showGrid'] = $scope.showGrid;
         dataConfig['showYAxes'] = $scope.showYAxes;
         dataConfig['showZoom'] = $scope.showZoom;
+        dataConfig['showBubbles'] = $scope.showBubbles;
         dataConfig['showMovement'] = $scope.showMovement;
         dataConfig['showAsPercentatge'] = $scope.showAsPercentatge;       
         dataConfig['resolution'] = $scope.resolution['value'];
@@ -3517,6 +3522,7 @@ function($scope, $route, $routeParams, $modal, Event, Metric, Visualization, $lo
 	$scope.showYAxes = false;
 	
 	$scope.showZoom = false;
+	$scope.showBubbles = false;
 	$scope.showMovement = true;
 	
 	
@@ -3665,6 +3671,7 @@ function($scope, $route, $routeParams, $modal, Event, Metric, Visualization, $lo
         dataConfig['showGrid'] = $scope.showGrid;
         dataConfig['showYAxes'] = $scope.showYAxes;
         dataConfig['showZoom'] = $scope.showZoom;
+        dataConfig['showBubbles'] = $scope.showBubbles;
         dataConfig['showMovement'] = $scope.showMovement;
         if (!$scope.showAsPercentatge)
         {

@@ -11,6 +11,11 @@ policycompass.viz.mapW_datamaps = function(options)
     	//console.log(key);
         self[key] = options[key];
     }
+    
+	console.log("self.legend="+self.legend);
+	console.log("self.showZoom="+self.showZoom);
+	console.log("self.showBubbles="+self.showBubbles);
+	    
 	self.parentSelect = self.idName;
 	self.parentSelect = self.parentSelect.replace("undefined","");
 
@@ -32,47 +37,14 @@ policycompass.viz.mapW_datamaps = function(options)
     var zoomFactor = 0.9,
 	enabled = true;
               
-              
-	var graticule = d3.geo.graticule();
+	var arrayBubbles = [];
 
-	self.svg = d3.select(self.parentSelect).append("svg")	
-			.attr("width", width)
-			.attr("height", height)
-			.attr("class", "mapa")
-			.append("g")			
-			;	
-
-	var projection;
-
-	var topo,projection,path,svg,g;
-
-		
-	
-	var λ = d3.scale.linear()
-	    //.domain([0, width])
-	    .domain([self.margin.left, self.margin.left+self.width])
-	    .range([-180, 180]);
-	
-	var φ = d3.scale.linear()
-	    //.domain([0, height])
-	    .domain([self.margin.top, self.height])
-	    .range([90, -90]);
-    
-    
-    var colors = d3.scale.category10();
+	var colors = d3.scale.category10();
     
     var objectColores = {};
     var objectColoresValues = {};
-    
-    objectColores['defaultFill']= "#ABDDA4";
+    var listDataToPlot = [];
 
-
-//console.log(self.data);
-
-var listDataToPlot = [];
-
-//	console.log("self.from_country="+self.from_country);
-//	console.log("self.to_country="+self.to_country);
 
 function getDate(d) {
     		return new Date(d);
@@ -130,9 +102,131 @@ var dates = {
         );
     }
 }
+	
+	d3.json("/app/modules/visualization/json/world-topo-min.json", function(error, world)
+	{
+  		var countries = topojson.feature(world, world.objects.countries).features;
+  		//console.log(countries);
+  		
+  		var maxValue = 0;
+  		for (di in self.data)  
+  		{
+				for (dj in self.data[di].Data)
+				{
+					if (dates.inRange (getDate(dj), getDate(self.from_country), getDate(self.to_country)))
+					{
+						//if (d3.max(d3.values(self.data[di].Data))>maxValue)
+						//{
+						//	console.log(d3.values(self.data[di]));
+						//	maxValue = d3.max(d3.values(self.data[di].Data));	
+						//}
+						if (self.data[di].Data[self.from_country]>maxValue)
+						{
+							maxValue = self.data[di].Data[self.from_country];							
+						}
+					}
+				}
+		}
+				
+  		for (var i=0; i < countries.length; i++) {
+  			
+  			for (di in self.data)  			
+			{
+				var sum = 0;
+				
+				
+				for (dj in self.data[di].Data)
+				{
+					//console.log(d3.max(d3.values(self.data[di].Data)));
+					
+					if (dates.inRange (getDate(dj), getDate(self.from_country), getDate(self.to_country)))
+					{						
+						if (self.data[di].Title==countries[i].properties.name)
+						{
+							sum = sum + self.data[di].Data[dj];
+							//if (countries[i].properties.name=='Spain')
+	  						var latlng = d3.geo.centroid(countries[i]);  				
+	  						//arrayBubbles.push({'name': countries[i].properties.name, 'latitude': latlng[1], 'longitude': latlng[0], 'radius': 45, 'fillKey': 'gt500'});  				
+	  						//console.log(countries[i].properties.name);
+	  						//console.log(d3.geo.centroid(countries[i]));
+  						}
+  					}
+  				}
+  				//console.log(sum);
+  				sum = Math.round(sum,2);
+	
+				if (sum>0)
+				{
+					//console.log(self.data[i]);
+					//console.log("maxvalue="+maxValue);
+					//console.log("sum="+sum);
+					//console.log("zoomFactor="+zoomFactor);
+					var maxradious = 25;
+					var radious = (maxradious*sum) / maxValue;  
+					//console.log(radious);
+					if (radious<(maxradious/5))
+					{
+						radious=(maxradious/5);
+					}
+					
+					//var radious = 30;
+					arrayBubbles.push({'name': countries[i].properties.name+': '+sum, 'latitude': latlng[1], 'longitude': latlng[0], 'radius': radious, 'fillKey': sum});
+					listDataToPlot[self.data[di].Id]= colors(sum);
+					//console.log(colors(sum));
+					objectColores[sum] = colors(sum);		
+				}	
+  			}
+			
+			//
+			
+		  };
+  		
+	
+	
+	//console.log(arrayBubbles);
+	           
+	var graticule = d3.geo.graticule();
+
+	self.svg = d3.select(self.parentSelect).append("svg")	
+			.attr("width", width)
+			.attr("height", height)
+			.attr("class", "mapa")
+			.append("g")			
+			;	
+
+	var projection;
+
+	var topo,projection,path,svg,g;
+
+		
+	
+	var λ = d3.scale.linear()
+	    //.domain([0, width])
+	    .domain([self.margin.left, self.margin.left+self.width])
+	    .range([-180, 180]);
+	
+	var φ = d3.scale.linear()
+	    //.domain([0, height])
+	    .domain([self.margin.top, self.height])
+	    .range([90, -90]);
+    
+    
+    
+    
+    objectColores['defaultFill']= "#ABDDA4";
+
 
 //console.log(self.data);
 
+
+
+//	console.log("self.from_country="+self.from_country);
+//	console.log("self.to_country="+self.to_country);
+
+
+
+//console.log(self.data);
+/*
 for (i in self.data)
 {
 //	console.log(self.data[i]);
@@ -168,10 +262,13 @@ for (i in self.data)
 	
 	if (sum>0)
 	{
+//		console.log(self.data[i]);
 		listDataToPlot[self.data[i].Id]= colors(sum);
 		objectColores[sum] = colors(sum);		
 	}
 }
+*/
+
 
 //console.log(listDataToPlot);
     /*
@@ -391,6 +488,14 @@ map_to_plot.bubbles([
 });
 */
 
+
+
+map_to_plot.bubbles(arrayBubbles, {
+ popupTemplate: function(geo, data) {
+   return "<div class='hoverinfo'>" + data.name + "";
+ }
+});
+
 /*
 map_to_plot.arc([
   {
@@ -447,7 +552,7 @@ if (self.legend)
 }
 
 			
-
+});
 
 }
 
