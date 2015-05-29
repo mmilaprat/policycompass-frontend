@@ -490,6 +490,8 @@ angular.module('pcApp.visualization.controllers.visualization', [
 			var arrayLabelsDataPie = [];
 			var arrayValuesDataPie = [];
 			var arrayUnitsDataPie = [];
+			var arrayColorsDataPie = [];
+			
 			var plotChart = false;
 			
 			if (($scope.numbers2) && (parseInt(value)>=0))
@@ -537,6 +539,8 @@ angular.module('pcApp.visualization.controllers.visualization', [
 						var labelName = $scope.numbers2[l].Labels[label];
 						var valueName = $scope.numbers2[l].Values[label];
 						var unitsName = $scope.numbers2[l].Units[label];
+						var colorName = $scope.numbers2[l].Colors[label];
+						
 						var a = arrayLabelsDataPie.indexOf(labelName);
 										
 						if (a>=0)
@@ -557,6 +561,8 @@ angular.module('pcApp.visualization.controllers.visualization', [
 							arrayLabelsDataPie.push(labelName);
 							arrayValuesDataPie.push(valueName);
 							arrayUnitsDataPie.push(unitsName);
+							arrayColorsDataPie.push(colorName);
+							
 						}
 					}
     				
@@ -581,12 +587,14 @@ angular.module('pcApp.visualization.controllers.visualization', [
     		{
 	    		//console.log("------------Key="+Key);
 	
+
 	
 				var ObjectData = {
 						'Key': Key, 
 						'Labels': arrayLabelsDataPie,
 						'Values': arrayValuesDataPie,
-						'Units': arrayUnitsDataPie
+						'Units': arrayUnitsDataPie,
+						'Colors': arrayColorsDataPie
 				};	
 					
 				//console.log(ObjectData);
@@ -597,6 +605,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
 					
 				if (($scope.mode=='create') || ($scope.mode=='edit'))
 				{
+					//console.log("plotPieChart");
 					$scope.plotPieChart();
 				}
 				
@@ -844,13 +853,15 @@ angular.module('pcApp.visualization.controllers.visualization', [
 							'innerRadious': innerRadious,
 							'font_size': font_size,
 							'showLegend': $scope.showLegend,
-							'showLines': $scope.showLines,
-							'showAreas': $scope.showAreas,							
-							'showPoints': $scope.showPoints,
+							//'showLines': $scope.showLines,
+							//'showAreas': $scope.showAreas,							
+							//'showPoints': $scope.showPoints,
 							'showLabels': $scope.showLabels,
-							'showGrid': $scope.showGrid
+							//'showGrid': $scope.showGrid
 							});
-		
+						
+//						console.log("datasetToSend");
+//						console.log(datasetToSend);
 			        	pieObj.render(datasetToSend);
 						}
 						
@@ -879,12 +890,12 @@ angular.module('pcApp.visualization.controllers.visualization', [
 				for (var k in $scope.selection.Keys) {
 					//console.log($scope.selection.Keys[k]);
 					//$scope.selection[k]=true;
-					console.log("k="+k);
-					console.log("$scope.selection.Keys[k]="+$scope.selection.Keys[k]);
+					//console.log("k="+k);
+					//console.log("$scope.selection.Keys[k]="+$scope.selection.Keys[k]);
 					if ($scope.selection.Keys[k])
 					{
 						for (var l in $scope.numbers2) {	
-							console.log("l="+l);
+							//console.log("l="+l);
 							if (k==$scope.numbers2[l].Key)
 							{
 								if (position=="")
@@ -946,7 +957,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
 					'Units': arrayUnitsDataPie
 				};	
 				
-				console.log(ObjectData);
+				//console.log(ObjectData);
 				
 				$scope.dataset = [];
 				
@@ -954,6 +965,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
 				
 				if (($scope.mode=='create') || ($scope.mode=='edit'))
 				{
+					//console.log("plotPieChart");
 					$scope.plotPieChart();	
 				}
 				
@@ -1005,7 +1017,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
 					};
 				
             		$scope.meticsRelated.push(data);
-            		console.log($scope.meticsRelated);
+            		//console.log($scope.meticsRelated);
            
             		
             	},
@@ -1270,8 +1282,14 @@ angular.module('pcApp.visualization.controllers.visualization', [
         		});
     	};	
 		
+		$scope.emptyFilterDates = function() {
+			document.getElementById("startDatePosX").value='';
+			document.getElementById("endDatePosX").value='';
+		};
+		
 		$scope.name = 'Link an event';
-      
+      	
+      	
    		$scope.showModal = function() {        
 			//console.log("show modal");
 			      
@@ -1985,10 +2003,41 @@ angular.module('pcApp.visualization.controllers.visualization', [
 									var label = arguments[i]['data']['table'][j].individual.title;
 									//console.log(label);
 									for (value in obj) {
-										//console.log(value+"---"+obj[value]);
+										
 										
 										var pieColor = '#000000';
 
+
+										if (colorsIdentities)
+										{
+											//console.log(colorsIdentities.length);
+											//if (colorsIdentities.length>=(j+1))
+											
+											var cntObject=0;
+											
+											for(var index in colorsIdentities) {      										
+	
+	      										if (j==cntObject)
+	      										{
+	      											
+	      										
+	      											if (colorsIdentities[index])
+													{											
+														pieColor = colorsIdentities[index];
+													}
+	      										}
+	      										
+	      										cntObject=cntObject+1;
+	 										}
+
+										}
+										else
+										{
+											pieColor = $scope.colorScale(arguments[i]['data']['table'][j].individual.title)
+										}
+										//console.log("---pieColor="+pieColor);
+									
+/*
 										var cntObject=0;
 										
 										for(var index in colorsIdentities) {      										
@@ -2005,6 +2054,9 @@ angular.module('pcApp.visualization.controllers.visualization', [
       										
       										cntObject=cntObject+1;
  										}
+ 										console.log("colorsIdentities");
+ 										console.log(colorsIdentities);
+ 										*/
  										/*
 										if (colorsIdentities)
 										{
@@ -2015,7 +2067,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
 											}
 										}	
 										*/									
-										pieColor = '';
+										//pieColor = '';
 										var arrayPieTmp = {
 										'Key': value,
 										'Label': label,
@@ -2352,7 +2404,8 @@ angular.module('pcApp.visualization.controllers.visualization', [
 					
 							$scope.selection = {Keys: $arrayTmp};
 						}
-
+						
+						//console.log("plotPieChart");
 						$scope.plotPieChart();
 						
 					}

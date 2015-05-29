@@ -16,6 +16,27 @@ policycompass.viz.barsMultiple = function(options) {
 	}
 
     self.parentSelect = "#"+self.idName;
+
+
+	self.maxWidth = self.width;
+	
+	self.cntResizes = 0;
+	d3.select(window).on('resize', resize);
+	
+	function resize() {		
+		self.cntResizes = self.cntResizes+1;
+		if (self.cntResizes>1)
+		{
+			var element=document.getElementById(self.parentSelect.replace("#",''));
+			element.innerHTML = "";		
+			self.init();	
+			self.render(self.dataIn, self.eventsData);
+		}
+		else
+		{
+			self.init();
+		}
+	}
     
     self.drawBarsMultiple = function (bars, eventsData) {
 //    	console.log(bars);
@@ -497,6 +518,18 @@ policycompass.viz.barsMultiple = function(options) {
 		//console.log(self.parentSelect);
 		self.parentSelect = self.parentSelect.replace("undefined","");
 		//console.log(self.parentSelect);
+		var selection = d3.select(self.parentSelect); 
+		var clientwidth = selection[0][0].clientWidth;
+		
+		if (self.maxWidth<clientwidth)
+		{
+			self.width = self.maxWidth;
+		}
+		else
+		{			
+			self.width = clientwidth-20;
+		}
+		//console.log(self.parentSelect);
 		
 		self.svg = d3.select(self.parentSelect).append("svg")
 			.attr("class","pc_chart")		
@@ -508,6 +541,9 @@ policycompass.viz.barsMultiple = function(options) {
 	}
 
     self.render = function(dataIn, eventsData){
+		
+		self.dataIn = dataIn;
+		self.eventsData = eventsData;
 		
 		if (Object.keys(dataIn).length === 0)
 		{

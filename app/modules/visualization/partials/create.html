@@ -56,8 +56,8 @@
             <div >
             	<div ng-show="canPlotGarph">          	
 	            	<div ng-show="((1==1)  || isSelectedSon('graph_line') || isSelectedSon('graph_pie') || isSelectedSon('graph_bars')) && (ListMetricsFilter.length>0)" class="graphContainerdiv">
-						<input type="hidden" id="startDatePosX" name="startDatePosX" value="">
-						<input type="hidden" id="endDatePosX" name="endDatePosX" value="">
+						<input type="hidden" ng-model="startDatePosX" id="startDatePosX" name="startDatePosX" value="">
+						<input type="hidden" ng-model="startDatePosX" id="endDatePosX" name="endDatePosX" value="">
 <!--
 <div id="maplegend" class="maplegend"></div>
 -->
@@ -327,7 +327,7 @@
 															> {{option.title}}
 															</label>
 														</td>
-														<td ng-show="isSelectedSon('graph_line')">
+														<td ng-show="isSelectedSon('graph_line') || isSelectedSon('graph_pie')">
 															<input type='color' name='color'
 															ng-init=" dataset_color_palete_[metric.id][option.id] = dataset_color_palete_[metric.id][option.id] == null ? colorScale(option.title) : dataset_color_palete_[metric.id][option.id] "
 															ng-model="dataset_color_palete_[metric.id][option.id]" 
@@ -400,7 +400,7 @@
                     <!-- ini tab historical events -->
                     <tab ng-show="isSelectedSon('graph_line')" heading="Historical Events ({{eventsToPlot.length}})">
 						<div class="buttonline clearfix-min">
-							<button type="submit" class="btn btn-primary button-metrics" id="addHEbutton" ng-click="showModal()">Add Historical Event</button>
+							<button type="submit" class="btn btn-primary button-metrics" id="addHEbutton" ng-click="emptyFilterDates();showModal()">Add Historical Event</button>
 						</div>
 						<br />
 						

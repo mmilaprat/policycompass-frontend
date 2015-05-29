@@ -45,6 +45,27 @@ policycompass.viz.pie = function(options)
 	self.clicToOpen = true;
 	
     self.parentSelect = "#"+self.idName;
+    
+
+	self.maxWidth = self.width;
+	self.cntResizes = 0;
+	d3.select(window).on('resize', resize);
+	
+	function resize() {		
+		self.cntResizes = self.cntResizes+1;
+		if (self.cntResizes>1)
+		{
+			var element=document.getElementById(self.parentSelect.replace("#",''));
+			element.innerHTML = "";		
+			self.init();	
+			self.render(self.piesArray);
+		}
+		else
+		{
+			self.init();
+		}
+	}
+	    
     //console.log("self.parentSelect="+self.parentSelect);
     
     self.drawArcs = function (piesArray) 
@@ -170,7 +191,7 @@ policycompass.viz.pie = function(options)
 		self.g.append("path")
 			.attr("d", self.arc)		      
 		    .style("fill", function(d,i) {
-		    	
+		    	//console.log("i="+i);
 					var colorToReturn;		        	  
 					colorToReturn = colorScale(i);
 					if (piesArray.Colors)
@@ -434,7 +455,20 @@ policycompass.viz.pie = function(options)
 		//console.log(self.parentSelect);
 		self.parentSelect = self.parentSelect.replace("undefined","");
 		//console.log(self.parentSelect);
+
+		var selection = d3.select(self.parentSelect); 
+		var clientwidth = selection[0][0].clientWidth;
 		
+		if (self.maxWidth<clientwidth)
+		{
+			self.width = self.maxWidth;
+		}
+		else
+		{			
+			self.width=clientwidth-20;	
+		}
+		//console.log(self.parentSelect);
+				
 		self.svg = d3.select(self.parentSelect).append("svg")
 					.attr("class","pc_chart")
 					.attr("id", "graph_"+self.idName)
@@ -449,6 +483,8 @@ policycompass.viz.pie = function(options)
 	}
 
     self.render = function(piesArray){
+    	
+    	self.piesArray = piesArray;
 		
 //		console.log(piesArray);
 		
