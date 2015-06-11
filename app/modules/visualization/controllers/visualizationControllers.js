@@ -737,6 +737,7 @@ angular.module('pcApp.visualization.controllers.visualization', [
 							'height': height,
 							'margin': margin,
 							'font_size': font_size,
+							'mode': $scope.mode,
 							'legend': $scope.showLegend,
 							'projection': $scope.typeToPlot,
 							'showZoom': $scope.showZoom,
@@ -744,8 +745,10 @@ angular.module('pcApp.visualization.controllers.visualization', [
 							'showMovement': $scope.showMovement,
 							'data': $scope.datasetToSendMap,
 							'from_country': from_country,
-							'to_country': to_country	
-												
+							'to_country': to_country
+							//'lt':document.getElementById("centerLatMap").value,
+							//'lg':document.getElementById("centerLngMap").value,
+							//'z':document.getElementById("zoomFactor").value												
 						});    			
     			
     		}
@@ -2879,11 +2882,25 @@ angular.module('pcApp.visualization.controllers.visualization', [
 			$scope.sem = 0;
 			for (i in $scope.visualization.historical_events_in_visualization)
 			{
+				var endEventDate = '';
+				var startEventDate = '';
+				var titleEvent = '';
+				var getHEData = true;
+				if ($scope.visualization.historical_events_in_visualization[i].data)
+				{
+					endEventDate = $scope.visualization.historical_events_in_visualization[i].data.endEventDate;
+					startEventDate = $scope.visualization.historical_events_in_visualization[i].data.startEventDate;
+					titleEvent = $scope.visualization.historical_events_in_visualization[i].data.title;
+					getHEData = false;
+				}
 				//console.log($scope.visualization.historical_events_in_visualization[i])
 				$scope.idHE[(parseInt(i)+1)]=$scope.visualization.historical_events_in_visualization[i].historical_event_id;
-				$scope.titleHE[(parseInt(i)+1)]=$scope.visualization.historical_events_in_visualization[i].title;
-				$scope.startDateHE[(parseInt(i)+1)] = $scope.visualization.historical_events_in_visualization[i].startEventDate;
-				$scope.endDateHE[(parseInt(i)+1)] = $scope.visualization.historical_events_in_visualization[i].endEventDate;
+				//$scope.titleHE[(parseInt(i)+1)]=$scope.visualization.historical_events_in_visualization[i].title;
+				$scope.titleHE[(parseInt(i)+1)] = titleEvent;
+				//$scope.startDateHE[(parseInt(i)+1)] = $scope.visualization.historical_events_in_visualization[i].startEventDate;
+				$scope.startDateHE[(parseInt(i)+1)] = startEventDate;
+				//$scope.endDateHE[(parseInt(i)+1)] = $scope.visualization.historical_events_in_visualization[i].endEventDate;
+				$scope.endDateHE[(parseInt(i)+1)] = endEventDate;
 				$scope.descHE[(parseInt(i)+1)] = $scope.visualization.historical_events_in_visualization[i].description;
 				$scope.colorHE[(parseInt(i)+1)] = $scope.visualization.historical_events_in_visualization[i].color;
 				
@@ -2891,9 +2908,12 @@ angular.module('pcApp.visualization.controllers.visualization', [
 				
 				var datosInT =  {
 					id : $scope.visualization.historical_events_in_visualization[i].historical_event_id,
-					title : $scope.visualization.historical_events_in_visualization[i].title,
-					startDate : $scope.visualization.historical_events_in_visualization[i].startEventDate,
-					endDate : $scope.visualization.historical_events_in_visualization[i].endEventDate,
+					//title : $scope.visualization.historical_events_in_visualization[i].title,
+					title : titleEvent,
+					//startDate : $scope.visualization.historical_events_in_visualization[i].startEventDate,
+					startDate : startEventDate,
+					//endDate : $scope.visualization.historical_events_in_visualization[i].endEventDate,
+					endDate : endEventDate,
 					desc :  $scope.visualization.historical_events_in_visualization[i].description,
 					color : $scope.visualization.historical_events_in_visualization[i].color
 				}
@@ -2901,18 +2921,24 @@ angular.module('pcApp.visualization.controllers.visualization', [
 				$scope.eventsToPlot[i]=datosInT;
 
 				//$scope.getEventDataDetail(i, $scope.visualization.historical_events_in_visualization[i]);
-				
-				$scope.getEventDataDetail(i, $scope.visualization.historical_events_in_visualization[i], function(resultado){
-					//console.log("*****************resultado********************");
-					//console.log(resultado);
-					
-   					//$scope.eventsToPlot[i]=resultado;
-   					//console.log($scope.eventsToPlot[i]);
-   					
-   					$scope.sem = $scope.sem+1;
-   					//console.log($scope.sem);
-					//console.log($scope.eventsToPlot);
-				});
+				if (getHEData)
+				{
+					$scope.getEventDataDetail(i, $scope.visualization.historical_events_in_visualization[i], function(resultado){
+						//console.log("*****************resultado********************");
+						//console.log(resultado);
+						
+	   					//$scope.eventsToPlot[i]=resultado;
+	   					//console.log($scope.eventsToPlot[i]);
+	   					
+	   					$scope.sem = $scope.sem+1;
+	   					//console.log($scope.sem);
+						//console.log($scope.eventsToPlot);
+					});
+				}
+				else
+				{
+					$scope.sem = $scope.sem+1;
+				}
 				
 				//$scope.eventsToPlot.push(datosInT);
 				
@@ -3726,6 +3752,7 @@ function($scope, $route, $routeParams, $modal, Event, Metric, Visualization, $lo
         dataConfig['showZoom'] = $scope.showZoom;
         dataConfig['showBubbles'] = $scope.showBubbles;
         dataConfig['showMovement'] = $scope.showMovement;
+        
         if (!$scope.showAsPercentatge)
         {
         	$scope.showAsPercentatge=false;

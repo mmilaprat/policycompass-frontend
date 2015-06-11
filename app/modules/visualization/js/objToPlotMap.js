@@ -34,7 +34,7 @@ policycompass.viz.mapW_datamaps = function(options)
     var height = self.height + self.margin.top + self.margin.bottom;
 	
 	self.maxWidth = self.width;
-	
+	self.maxHeight = self.height;
 	
 	self.cntResizes = 0;
 	d3.select(window).on('resize', resize);
@@ -43,8 +43,12 @@ policycompass.viz.mapW_datamaps = function(options)
 		self.cntResizes = self.cntResizes+1;
 		if (self.cntResizes>1)
 		{
+		
 			var element=document.getElementById(self.parentSelect.replace("#",''));
 			element.innerHTML = "";		
+			console.log(self.parentSelect);
+	      	d3.select("#"+self.parentSelect).select("svg").remove();
+			
 			self.plotMap()
 		}
 		else
@@ -131,12 +135,16 @@ policycompass.viz.mapW_datamaps = function(options)
 		{
 			//self.width = self.maxWidth;
 			width = self.maxWidth + self.margin.left + self.margin.left;
+			height = self.maxHeight;
 		}
 		else
 		{	
 			width = clientwidth + self.margin.left + self.margin.left;
+			var newScale = (self.width) / self.maxWidth;
+			//console.log("newScale="+newScale);
+			height = self.maxHeight * newScale;
 		}
-
+       	
 		d3.json("/app/modules/visualization/json/world-topo-min.json", function(error, world)
 		{
 	  		var countries = topojson.feature(world, world.objects.countries).features;
@@ -217,6 +225,10 @@ policycompass.viz.mapW_datamaps = function(options)
 		
 			//console.log(arrayBubbles);
 			var graticule = d3.geo.graticule();
+			
+			
+			d3.select(self.parentSelect).append("svg").remove();
+			
 			self.svg = d3.select(self.parentSelect).append("svg")	
 				.attr("width", width)
 				.attr("height", height)
@@ -236,19 +248,26 @@ policycompass.viz.mapW_datamaps = function(options)
 		    	.domain([self.margin.top, self.height])
 		    	.range([90, -90]);
 	
-			objectColores['defaultFill']= "#ABDDA4";
-			
+			//objectColores['defaultFill']= "#ABDDA4";
+			objectColores['defaultFill']= "#cccccc";
 	    
 			var map_to_plot = new Datamap({
 				scope: 'world',
 				element: document.getElementById(self.parentSelect),  
 				projection: self.projection,
 				setProjection: function(element, options) {
-	
+				
+				lt= 0;
+				lg= 40;
+				
+				
+				
+				//console.log(self.projection);
 					if (self.projection=='mercator')
 					{
 						projection = d3.geo.mercator()	
 							.center([0, 40])
+							//.center([lt, lg])
 							.translate([(width/2), (height/2)])
 							.scale( width / 3.8 / Math.PI)
 							.precision(.1);
@@ -396,18 +415,42 @@ policycompass.viz.mapW_datamaps = function(options)
 		//	DEU: { fillKey:'color_'+2, value: 2 }
 		//},
 		done: function(datamap) {
+		
 			if (self.showZoom)
 			{
 				datamap.svg.call(d3.behavior.zoom().on("zoom", redraw));
 				function redraw() {
-		                datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+						
+						datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+
+		               //console.log(self.mode);
+		               //console.log(d3.event.translate);
+		               //console.log(d3.event.scale);
+		               //if ((self.mode=='edit') || (self.mode=='create'))
+		               //{
+		               //		document.getElementById("centerLatMap").value=d3.event.translate[0];
+		               //		document.getElementById("centerLngMap").value=d3.event.translate[1];
+					   //		document.getElementById("zoomFactor").value=d3.event.scale;
+		               //}
+		                 
+						//resize bubles. current size / scale map zoom		               
+						datamap.svg.selectAll("circle")
+						      .attr("r", function(){
+						        var self = d3.select(this);
+						        
+								//console.log(self[0][0]['__data__']['radius']);
+						        var r = self[0][0]['__data__']['radius'] / d3.event.scale;  // set radius according to scale
+						        //var r = self.radius / d3.event.scale;  // set radius according to scale
+						        self.style("stroke-width", r < 4 ? (r < 2 ? 0.5 : 1) : 2);  // scale stroke-width
+						        return r;
+						    });		     
+				               
 				}
 				
 	
 				
 			}
 			
-	
 		}
 			
 	
@@ -501,6 +544,7 @@ policycompass.viz.mapW_datamaps = function(options)
 	    labels: objectColoresValues,
 	  });	
 	}
+	
 	
 				
 	});
